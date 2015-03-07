@@ -60,6 +60,7 @@
 					# comma-separated list of addresses;
 					# defaults to 'localhost', '*' = all
 					# (change requires restart)
+listen_addresses = '0.0.0.0'
 #port = 5432				# (change requires restart)
 max_connections = 100			# (change requires restart)
 # Note:  Increasing max_connections costs ~400 bytes of shared memory per 
@@ -104,8 +105,9 @@ max_connections = 100			# (change requires restart)
 
 # - Memory -
 
-shared_buffers = 32MB			# min 128kB
+###shared_buffers = 32MB			# min 128kB
 					# (change requires restart)
+shared_buffers = {{ansible_memtotal_mb//4}}MB
 #temp_buffers = 8MB			# min 800kB
 #max_prepared_transactions = 0		# zero disables the feature
 					# (change requires restart)

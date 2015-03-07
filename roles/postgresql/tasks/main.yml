@@ -7,3 +7,13 @@
 
 - name: postgresql initdb
   command: service postgresql initdb creates=/var/lib/pgsql/data/PG_VERSION
+
+- name: postgresql settings
+  template: src={{item}}.j2 dest=/var/lib/pgsql/data/{{item}} owner=postgres group=postgres mode=600
+  with_items:
+    - postgresql.conf
+    - pg_hba.conf
+  notify: postgresql restart
+
+- name: postgresql start
+  service: name=postgresql state=started enabled=yes
