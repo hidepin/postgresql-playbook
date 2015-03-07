@@ -5,3 +5,5 @@
   with_items:
     - postgresql-server
 
+- name: postgresql initdb
+  command: service postgresql initdb creates=/var/lib/pgsql/data/PG_VERSION
