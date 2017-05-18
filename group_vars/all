@@ -4,7 +4,13 @@
 rhel_subscription:
   username: 'username'
   password: 'password'
-ntp_server: "192.168.0.1"
+
+############################################################
+# common role settin
+############################################################
+exec_common_role: True
+
+ntp_server: "{{ ansible_default_ipv4.gateway }}"
 kdump_partition: "/dump"
 generate_host: False
 common_user:
