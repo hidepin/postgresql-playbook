@@ -21,13 +21,17 @@ limits_setting:
   - { domain: 'root', type: 'hard', item: 'nofile', value: '65536' }
 tuned_profile: 'default'
 tuned_profile_parameter:
+  - section: 'vm'
+    parameter:
+      - { option: 'transparent_hugepages', value: 'never' }
+  - section: 'disk'
+    parameter:
+      - { option: 'elevator', value: 'dealine' }
+      - { option: 'readahead', value: '128' }
   - section: 'sysctl'
     parameter:
       - { option: 'net.ipv4.ip_local_port_range', value: '32768 64999' }
-      - { option: 'net.core.somaxconn', value: '511' }
-      - { option: 'net.ipv4.tcp_keepalive_intvl', value: '5' }
-      - { option: 'net.ipv4.tcp_keepalive_probes', value: '5' }
-      - { option: 'net.ipv4.tcp_keepalive_time', value: '60' }
+      - { option: 'vm.nr_hugepages', value: '0' }
 kernel_update: True
 update_pkg:
   - glibc
