@@ -129,3 +129,15 @@
     state: started
     enabled: yes
     daemon_reload: yes
+
+- block:
+  - name: pg_stat_statement enabled check
+    command: psql -U postgres -d postgres -t -c "select extname from pg_extension where extname = 'pg_stat_statements'"
+    register: pg_stat_statement_enabled
+    changed_when: false
+
+  - name: pg_stat_statement enabled
+    command: psql -U postgres -d postgres -c "CREATE EXTENSION pg_stat_statements"
+    when: pg_stat_statement_enabled.stdout == ''
+
+  when: pg_stat_statement_enabled
