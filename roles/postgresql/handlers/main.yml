@@ -1,4 +1,6 @@
 ---
 # file: roles/postgresql/handlers/main.yml
 - name: postgresql restart
-  service: name=postgresql-9.4 state=restarted
+  service:
+    name: "postgresql-{{ pgdg_version|regex_replace('-.*', '') }}"
+    state: restarted

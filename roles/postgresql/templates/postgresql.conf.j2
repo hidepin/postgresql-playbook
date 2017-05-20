@@ -60,9 +60,11 @@
 					# comma-separated list of addresses;
 					# defaults to 'localhost'; use '*' for all
 					# (change requires restart)
+listen_addresses = '*'
 #port = 5432				# (change requires restart)
 max_connections = 100			# (change requires restart)
 #superuser_reserved_connections = 3	# (change requires restart)
+superuser_reserved_connections = 10
 #unix_socket_directories = '/var/run/postgresql, /tmp'	# comma-separated list of directories
 					# (change requires restart)
 #unix_socket_group = ''			# (change requires restart)
@@ -98,10 +100,13 @@ max_connections = 100			# (change requires restart)
 
 #tcp_keepalives_idle = 0		# TCP_KEEPIDLE, in seconds;
 					# 0 selects the system default
+tcp_keepalives_idle = 60
 #tcp_keepalives_interval = 0		# TCP_KEEPINTVL, in seconds;
 					# 0 selects the system default
+tcp_keepalives_interval = 5
 #tcp_keepalives_count = 0		# TCP_KEEPCNT;
 					# 0 selects the system default
+tcp_keepalives_count = 5
 
 
 #------------------------------------------------------------------------------
@@ -110,10 +115,14 @@ max_connections = 100			# (change requires restart)
 
 # - Memory -
 
-shared_buffers = 128MB			# min 128kB
+###shared_buffers = 128MB			# min 128kB
 					# (change requires restart)
+shared_buffers = {{ ansible_memtotal_mb // 10 }}MB
 #huge_pages = try			# on, off, or try
 					# (change requires restart)
+{% if vm_nr_hugepages.stdout != 0 %}
+huge_pages = on
+{% endif %}
 #temp_buffers = 8MB			# min 800kB
 #max_prepared_transactions = 0		# zero disables the feature
 					# (change requires restart)
@@ -170,6 +179,7 @@ dynamic_shared_memory_type = posix	# the default is the first option
 
 #wal_level = minimal			# minimal, archive, hot_standby, or logical
 					# (change requires restart)
+wal_level = archive
 #fsync = on				# turns forced synchronization on or off
 #synchronous_commit = on		# synchronization level;
 					# off, local, remote_write, or on
@@ -194,9 +204,12 @@ dynamic_shared_memory_type = posix	# the default is the first option
 # - Checkpoints -
 
 #checkpoint_timeout = 5min		# range 30s-1h
+checkpoint_timeout = 15min
 #max_wal_size = 1GB
 #min_wal_size = 80MB
+min_wal_size = 1GB
 #checkpoint_completion_target = 0.5	# checkpoint target duration, 0.0 - 1.0
+checkpoint_completion_target = 0.7
 #checkpoint_warning = 30s		# 0 disables
 
 # - Archiving -
@@ -207,6 +220,7 @@ dynamic_shared_memory_type = posix	# the default is the first option
 				# placeholders: %p = path of file to archive
 				#               %f = file name only
 				# e.g. 'test ! -f /mnt/server/archivedir/%f && cp %p /mnt/server/archivedir/%f'
+archive_command = '/bin/cp %p {{ postgresql_top_dir }}/pgarch/arc1/%f'
 #archive_timeout = 0		# force a logfile segment switch after this
 				# number of seconds; 0 disables
 
@@ -287,6 +301,7 @@ dynamic_shared_memory_type = posix	# the default is the first option
 #cpu_index_tuple_cost = 0.005		# same scale as above
 #cpu_operator_cost = 0.0025		# same scale as above
 #effective_cache_size = 4GB
+effective_cache_size = {{ ansible_memtotal_mb // 2 }}MB
 
 # - Genetic Query Optimizer -
 
@@ -326,10 +341,12 @@ logging_collector = on			# Enable capturing of stderr and csvlog
 					# (change requires restart)
 
 # These are only used if logging_collector is on:
-log_directory = 'pg_log'		# directory where log files are written,
+###log_directory = 'pg_log'		# directory where log files are written,
 					# can be absolute or relative to PGDATA
-log_filename = 'postgresql-%a.log'	# log file name pattern,
+log_directory = '/var/log/postgresql'
+###log_filename = 'postgresql-%a.log'	# log file name pattern,
 					# can include strftime() escapes
+log_filename = 'postgresql-%Y-%m-%d.log'
 #log_file_mode = 0600			# creation mode for log files,
 					# begin with 0 to use octal notation
 log_truncate_on_rotation = on		# If on, an existing log file with the
@@ -398,6 +415,7 @@ log_rotation_size = 0			# Automatic rotation of logfiles will
 					# and their durations, > 0 logs only
 					# statements running at least this number
 					# of milliseconds
+log_min_duration_statement = 5s
 
 
 # - What to Log -
@@ -407,12 +425,14 @@ log_rotation_size = 0			# Automatic rotation of logfiles will
 #debug_print_plan = off
 #debug_pretty_print = on
 #log_checkpoints = off
+log_checkpoints = on
 #log_connections = off
 #log_disconnections = off
 #log_duration = off
 #log_error_verbosity = default		# terse, default, or verbose messages
+log_error_verbosity = verbose
 #log_hostname = off
-log_line_prefix = '< %m >'			# special values:
+###log_line_prefix = '< %m >'			# special values:
 					#   %a = application name
 					#   %u = user name
 					#   %d = database name
@@ -432,7 +452,9 @@ log_line_prefix = '< %m >'			# special values:
 					#        processes
 					#   %% = '%'
 					# e.g. '<%u%%%d> '
+log_line_prefix = '%t %p %c-%l %x %q(%u,%d,%r,%a) '
 #log_lock_waits = off			# log lock waits >= deadlock_timeout
+log_lock_waits = on
 #log_statement = 'none'			# none, ddl, mod, all
 #log_replication_commands = off
 #log_temp_files = -1			# log temporary files equal or larger
@@ -480,6 +502,7 @@ log_timezone = 'Japan'
 					# their durations, > 0 logs only
 					# actions running at least this number
 					# of milliseconds.
+log_autovacuum_min_duration = 0
 #autovacuum_max_workers = 3		# max number of autovacuum subprocesses
 					# (change requires restart)
 #autovacuum_naptime = 1min		# time between autovacuum runs
@@ -491,6 +514,7 @@ log_timezone = 'Japan'
 #autovacuum_analyze_scale_factor = 0.1	# fraction of table size before analyze
 #autovacuum_freeze_max_age = 200000000	# maximum XID age before forced vacuum
 					# (change requires restart)
+autovacuum_freeze_max_age = 2000000000
 #autovacuum_multixact_freeze_max_age = 400000000	# maximum multixact age
 					# before forced vacuum
 					# (change requires restart)
@@ -500,6 +524,7 @@ log_timezone = 'Japan'
 #autovacuum_vacuum_cost_limit = -1	# default vacuum cost limit for
 					# autovacuum, -1 means use
 					# vacuum_cost_limit
+autovacuum_vacuum_cost_limit = 400
 
 
 #------------------------------------------------------------------------------
