@@ -120,7 +120,7 @@ tcp_keepalives_count = 5
 shared_buffers = {{ ansible_memtotal_mb // 10 }}MB
 #huge_pages = try			# on, off, or try
 					# (change requires restart)
-{% if vm_nr_hugepages.stdout != 0 %}
+{% if vm_nr_hugepages.stdout != "0" %}
 huge_pages = on
 {% endif %}
 #temp_buffers = 8MB			# min 800kB
