@@ -1,6 +1,6 @@
 [ -f /etc/profile ] && source /etc/profile
 ###PGDATA=/var/lib/pgsql/{{ pgdg_version|regex_replace('-.*', '') }}/data
-PGDATA={{ postgresql_top_dir }}/pgdata
+PGDATA={{ postgresql_top_dir }}/pgdata/data
 export PGDATA
 # If you want to customize your settings,
 # Use the file below. This is not overridden

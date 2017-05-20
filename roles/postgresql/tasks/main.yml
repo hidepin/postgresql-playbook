@@ -35,9 +35,9 @@
     - { path: "/var/log/postgresql", owner: 'postgres', group: 'postgres', mode: '0755' }
 
 - name: postgresql initdb
-  command: su - postgres -c "/usr/pgsql-{{ pgdg_version|regex_replace('-.*', '') }}/bin/initdb -D {{ postgresql_top_dir }}/pgdata -X {{ postgresql_top_dir }}/pgxlog/pg_xlog --encoding=UTF-8 --no-locale"
+  command: su - postgres -c "/usr/pgsql-{{ pgdg_version|regex_replace('-.*', '') }}/bin/initdb -D {{ postgresql_top_dir }}/pgdata/data -X {{ postgresql_top_dir }}/pgxlog/pg_xlog --encoding=UTF-8 --no-locale"
   args:
-    creates: "{{ postgresql_top_dir }}/pgdata/PG_VERSION"
+    creates: "{{ postgresql_top_dir }}/pgdata/data/PG_VERSION"
 
 - block:
   - name: postgres bash profile
@@ -92,7 +92,7 @@
   - name: postgresql.conf settings
     template:
       src: "postgresql.conf.j2"
-      dest: "{{ postgresql_top_dir }}/pgdata/postgresql.conf"
+      dest: "{{ postgresql_top_dir }}/pgdata/data/postgresql.conf"
       owner: postgres
       group: postgres
       mode: 0600
@@ -103,7 +103,7 @@
   - name: pg_hba.conf settings
     template:
       src: "pg_hba.conf.j2"
-      dest: "{{ postgresql_top_dir }}/pgdata/pg_hba.conf"
+      dest: "{{ postgresql_top_dir }}/pgdata/data/pg_hba.conf"
       owner: postgres
       group: postgres
       mode: 0600
