@@ -60,7 +60,7 @@
 					# comma-separated list of addresses;
 					# defaults to 'localhost'; use '*' for all
 					# (change requires restart)
-listen_addresses = '*'
+listen_addresses = '{{ pg_listen_addresses }}'
 #port = 5432				# (change requires restart)
 max_connections = {{ pg_max_connections }}			# (change requires restart)
 #superuser_reserved_connections = 3	# (change requires restart)
@@ -129,6 +129,7 @@ huge_pages = on
 # Caution: it is not advisable to set max_prepared_transactions nonzero unless
 # you actively intend to use prepared transactions.
 #work_mem = 4MB				# min 64kB
+work_mem = {{ pg_work_mem }}MB
 #maintenance_work_mem = 64MB		# min 1MB
 #autovacuum_work_mem = -1		# min 1MB, or -1 to use maintenance_work_mem
 #max_stack_depth = 2MB			# min 100kB
@@ -303,11 +304,12 @@ archive_command = '{{ pg_archive_command }}'
 
 #seq_page_cost = 1.0			# measured on an arbitrary scale
 #random_page_cost = 4.0			# same scale as above
+random_page_cost = {{ pg_random_page_cost }}
 #cpu_tuple_cost = 0.01			# same scale as above
 #cpu_index_tuple_cost = 0.005		# same scale as above
 #cpu_operator_cost = 0.0025		# same scale as above
 #effective_cache_size = 4GB
-effective_cache_size = {{ pg_effective_cache_size }}MB
+effective_cache_size = {{ pg_effective_cache_size }}GB
 
 # - Genetic Query Optimizer -
 
@@ -520,7 +522,7 @@ log_autovacuum_min_duration = {{ pg_log_autovacuum_min_duration }}
 #autovacuum_analyze_scale_factor = 0.1	# fraction of table size before analyze
 #autovacuum_freeze_max_age = 200000000	# maximum XID age before forced vacuum
 					# (change requires restart)
-autovacuum_freeze_max_age = {{ autovacuum_freeze_max_age }}
+autovacuum_freeze_max_age = {{ pg_autovacuum_freeze_max_age }}
 #autovacuum_multixact_freeze_max_age = 400000000	# maximum multixact age
 					# before forced vacuum
 					# (change requires restart)

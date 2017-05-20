@@ -6,12 +6,14 @@ epel_version: "7-9"
 postgresql_pkg:
   - "postgresql{{ pgdg_version|regex_replace('-.*', '')|regex_replace('\\.', '') }}-server"
 #  - "postgis2_{{ pgdg_version|regex_replace('-.*', '')|regex_replace('\\.', '') }}"
+pg_listen_addresses: "*"
 pg_max_connections: 100
 pg_superuser_reserved_connections: 10
 pg_tcp_keepalives_idle: 60
 pg_tcp_keepalives_interval: 5
 pg_tcp_keepalives_count: 5
 pg_shared_buffers: "{{ ansible_memtotal_mb // 10 }}" # MB
+pg_work_mem: 4 # MB
 pg_wal_level: archive
 pg_checkpoint_segments: 64
 pg_checkpoint_timeout: 15 # min
@@ -19,7 +21,8 @@ pg_max_wal_size: 1024 # MB
 pg_min_wal_size: 1024 # MB
 pg_checkpoint_completion_target: 0.7
 pg_archive_command: "/bin/cp %p {{ postgresql_top_dir }}/pgarch/arc1/%f"
-pg_effective_cache_size: "{{ ansible_memtotal_mb // 2 }}" # MB
+pg_random_page_cost: 4.0
+pg_effective_cache_size: "{{ (ansible_memtotal_mb / 2 / 1024)|round(0, 'ceil')|int }}" # GB
 pg_log_directory: "/var/log/postgresql"
 pg_log_filename: "postgresql-%Y-%m-%d.log"
 pg_log_min_duration_statement: 5 # second
