@@ -13,11 +13,21 @@
     - "https://dl.fedoraproject.org/pub/epel/{{ ansible_distribution_major_version }}/x86_64/{{ (ansible_distribution_major_version == '7')|ternary('e/','') }}epel-release-{{ epel_version }}.noarch.rpm"
 
 - name: packages install
-  yum:
+  package:
     name: "{{item}}"
     state: present
   with_items:
     "{{ postgresql_pkg }}"
+
+- name: pg_statsinfo install
+  yum:
+    name: "https://downloads.sourceforge.net/project/pgstatsinfo/pg_statsinfo/{{ pg_statsinfo_version|regex_replace('-.*', '') }}/pg_statsinfo-{{ pg_statsinfo_version }}.pg{{ pgdg_version|regex_replace('-.*', '')|regex_replace('\\.', '') }}.rhel{{ ansible_distribution_major_version }}.x86_64.rpm"
+    state: present
+  register: result
+  until: result | success
+  retries: 3
+  delay: 5
+  when: pg_statsinfo_enabled
 
 - name: create postgresql dir
   file:
