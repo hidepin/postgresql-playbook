@@ -120,7 +120,7 @@ tcp_keepalives_count = 5
 shared_buffers = {{ ansible_memtotal_mb // 10 }}MB
 #huge_pages = try			# on, off, or try
 					# (change requires restart)
-{% if vm_nr_hugepages.stdout != "0" %}
+{% if vm_nr_hugepages.stdout|int != 0 %}
 huge_pages = on
 {% endif %}
 #temp_buffers = 8MB			# min 800kB
@@ -203,11 +203,17 @@ wal_level = archive
 
 # - Checkpoints -
 
+{% if pgdg_version|regex_replace('-.*', '')|float < 9.4 %}
+checkpoint_segments = 64
+{% endif %}
 #checkpoint_timeout = 5min		# range 30s-1h
 checkpoint_timeout = 15min
 #max_wal_size = 1GB
 #min_wal_size = 80MB
+{% if pgdg_version|regex_replace('-.*', '')|float >= 9.5 %}
+max_wal_size = 1GB
 min_wal_size = 1GB
+{% endif %}
 #checkpoint_completion_target = 0.5	# checkpoint target duration, 0.0 - 1.0
 checkpoint_completion_target = 0.7
 #checkpoint_warning = 30s		# 0 disables
