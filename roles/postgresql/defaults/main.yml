@@ -4,7 +4,11 @@ postgresql_top_dir: "/opt/pg"
 pgdg_version: "9.6-3"
 epel_version: "7-9"
 postgresql_pkg:
+  - "postgresql{{ pgdg_version|regex_replace('-.*', '')|regex_replace('\\.', '') }}"
+  - "postgresql{{ pgdg_version|regex_replace('-.*', '')|regex_replace('\\.', '') }}-libs"
   - "postgresql{{ pgdg_version|regex_replace('-.*', '')|regex_replace('\\.', '') }}-server"
+  - "postgresql{{ pgdg_version|regex_replace('-.*', '')|regex_replace('\\.', '') }}-contrib"
+  - "postgresql{{ pgdg_version|regex_replace('-.*', '')|regex_replace('\\.', '') }}-docs"
 #  - "postgis2_{{ pgdg_version|regex_replace('-.*', '')|regex_replace('\\.', '') }}"
 pg_listen_addresses: "*"
 pg_max_connections: 100
