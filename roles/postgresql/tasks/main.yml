@@ -7,7 +7,7 @@
   register: result
   until: result | success
   retries: 3
-  delay: 3
+  delay: 5
   with_items:
     - "https://download.postgresql.org/pub/repos/yum/{{ pgdg_version|regex_replace('-.*', '') }}/redhat/rhel-{{ ansible_distribution_major_version }}-x86_64/pgdg-{{ ansible_distribution|lower }}{{ pgdg_version|regex_replace('-.*', '')|regex_replace('\\.', '') }}-{{ pgdg_version }}.noarch.rpm"
     - "https://dl.fedoraproject.org/pub/epel/{{ ansible_distribution_major_version }}/x86_64/{{ (ansible_distribution_major_version == '7')|ternary('e/','') }}epel-release-{{ epel_version }}.noarch.rpm"
