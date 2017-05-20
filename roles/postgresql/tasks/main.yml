@@ -74,8 +74,8 @@
 
   - name: postgresql PGDATA settings
     template:
-      src: pgdata.conf.j2
-      dest: "/etc/systemd/system/postgresql-{{ pgdg_version|regex_replace('-.*', '') }}.service.d/pgdata.conf"
+      src: local.conf.j2
+      dest: "/etc/systemd/system/postgresql-{{ pgdg_version|regex_replace('-.*', '') }}.service.d/local.conf"
       owner: root
       group: root
       mode: 0644
