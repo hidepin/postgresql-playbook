@@ -63,10 +63,9 @@
 listen_addresses = '*'
 #port = 5432				# (change requires restart)
 max_connections = 100			# (change requires restart)
-# Note:  Increasing max_connections costs ~400 bytes of shared memory per
-# connection slot, plus lock space (see max_locks_per_transaction).
 #superuser_reserved_connections = 3	# (change requires restart)
-#unix_socket_directories = '/tmp'	# comma-separated list of directories
+superuser_reserved_connections = 10
+#unix_socket_directories = '/var/run/postgresql, /tmp'	# comma-separated list of directories
 					# (change requires restart)
 #unix_socket_group = ''			# (change requires restart)
 #unix_socket_permissions = 0777		# begin with 0 to use octal notation
@@ -84,13 +83,13 @@ max_connections = 100			# (change requires restart)
 					# (change requires restart)
 #ssl_prefer_server_ciphers = on		# (change requires restart)
 #ssl_ecdh_curve = 'prime256v1'		# (change requires restart)
-#ssl_renegotiation_limit = 0		# amount of data between renegotiations
 #ssl_cert_file = 'server.crt'		# (change requires restart)
 #ssl_key_file = 'server.key'		# (change requires restart)
 #ssl_ca_file = ''			# (change requires restart)
 #ssl_crl_file = ''			# (change requires restart)
 #password_encryption = on
 #db_user_namespace = off
+#row_security = on
 
 # GSSAPI using Kerberos
 #krb_server_keyfile = ''
@@ -101,10 +100,13 @@ max_connections = 100			# (change requires restart)
 
 #tcp_keepalives_idle = 0		# TCP_KEEPIDLE, in seconds;
 					# 0 selects the system default
+tcp_keepalives_idle = 60
 #tcp_keepalives_interval = 0		# TCP_KEEPINTVL, in seconds;
 					# 0 selects the system default
+tcp_keepalives_interval = 5
 #tcp_keepalives_count = 0		# TCP_KEEPCNT;
 					# 0 selects the system default
+tcp_keepalives_count = 5
 
 
 #------------------------------------------------------------------------------
@@ -113,17 +115,19 @@ max_connections = 100			# (change requires restart)
 
 # - Memory -
 
-shared_buffers = 128MB			# min 128kB
+###shared_buffers = 128MB			# min 128kB
 					# (change requires restart)
+shared_buffers = {{ ansible_memtotal_mb // 10 }}MB
 #huge_pages = try			# on, off, or try
 					# (change requires restart)
+{% if vm_nr_hugepages.stdout|int != 0 %}
+huge_pages = on
+{% endif %}
 #temp_buffers = 8MB			# min 800kB
 #max_prepared_transactions = 0		# zero disables the feature
 					# (change requires restart)
-# Note:  Increasing max_prepared_transactions costs ~600 bytes of shared memory
-# per transaction slot, plus lock space (see max_locks_per_transaction).
-# It is not advisable to set max_prepared_transactions nonzero unless you
-# actively intend to use prepared transactions.
+# Caution: it is not advisable to set max_prepared_transactions nonzero unless
+# you actively intend to use prepared transactions.
 #work_mem = 4MB				# min 64kB
 #maintenance_work_mem = 64MB		# min 1MB
 #autovacuum_work_mem = -1		# min 1MB, or -1 to use maintenance_work_mem
@@ -187,6 +191,7 @@ wal_level = archive
 					#   fsync_writethrough
 					#   open_sync
 #full_page_writes = on			# recover from partial page writes
+#wal_compression = off			# enable compression of full-page writes
 #wal_log_hints = off			# also do full page writes of non-critical updates
 					# (change requires restart)
 #wal_buffers = -1			# min 32kB, -1 sets based on shared_buffers
@@ -198,19 +203,30 @@ wal_level = archive
 
 # - Checkpoints -
 
-#checkpoint_segments = 3		# in logfile segments, min 1, 16MB each
+{% if pgdg_version|regex_replace('-.*', '')|float < 9.4 %}
+checkpoint_segments = 64
+{% endif %}
 #checkpoint_timeout = 5min		# range 30s-1h
+checkpoint_timeout = 15min
+#max_wal_size = 1GB
+#min_wal_size = 80MB
+{% if pgdg_version|regex_replace('-.*', '')|float >= 9.5 %}
+max_wal_size = 1GB
+min_wal_size = 1GB
+{% endif %}
 #checkpoint_completion_target = 0.5	# checkpoint target duration, 0.0 - 1.0
+checkpoint_completion_target = 0.7
 #checkpoint_warning = 30s		# 0 disables
 
 # - Archiving -
 
-#archive_mode = off		# allows archiving to be done
+#archive_mode = off		# enables archiving; off, on, or always
 				# (change requires restart)
 #archive_command = ''		# command to use to archive a logfile segment
 				# placeholders: %p = path of file to archive
 				#               %f = file name only
 				# e.g. 'test ! -f /mnt/server/archivedir/%f && cp %p /mnt/server/archivedir/%f'
+archive_command = '/bin/cp %p {{ postgresql_top_dir }}/pgarch/arc1/%f'
 #archive_timeout = 0		# force a logfile segment switch after this
 				# number of seconds; 0 disables
 
@@ -229,6 +245,8 @@ wal_level = archive
 #wal_sender_timeout = 60s	# in milliseconds; 0 disables
 
 #max_replication_slots = 0	# max number of replication slots
+				# (change requires restart)
+#track_commit_timestamp = off	# collect timestamp of transaction commit
 				# (change requires restart)
 
 # - Master Server -
@@ -259,6 +277,8 @@ wal_level = archive
 #wal_receiver_timeout = 60s		# time that receiver waits for
 					# communication from master
 					# in milliseconds; 0 disables
+#wal_retrieve_retry_interval = 5s	# time to wait before retrying to
+					# retrieve WAL after a failed attempt
 
 
 #------------------------------------------------------------------------------
@@ -287,6 +307,7 @@ wal_level = archive
 #cpu_index_tuple_cost = 0.005		# same scale as above
 #cpu_operator_cost = 0.0025		# same scale as above
 #effective_cache_size = 4GB
+effective_cache_size = {{ ansible_memtotal_mb // 2 }}MB
 
 # - Genetic Query Optimizer -
 
@@ -326,10 +347,12 @@ logging_collector = on			# Enable capturing of stderr and csvlog
 					# (change requires restart)
 
 # These are only used if logging_collector is on:
-log_directory = 'pg_log'		# directory where log files are written,
+###log_directory = 'pg_log'		# directory where log files are written,
 					# can be absolute or relative to PGDATA
-log_filename = 'postgresql-%a.log'	# log file name pattern,
+log_directory = '/var/log/postgresql'
+###log_filename = 'postgresql-%a.log'	# log file name pattern,
 					# can include strftime() escapes
+log_filename = 'postgresql-%Y-%m-%d.log'
 #log_file_mode = 0600			# creation mode for log files,
 					# begin with 0 to use octal notation
 log_truncate_on_rotation = on		# If on, an existing log file with the
@@ -398,6 +421,7 @@ log_rotation_size = 0			# Automatic rotation of logfiles will
 					# and their durations, > 0 logs only
 					# statements running at least this number
 					# of milliseconds
+log_min_duration_statement = 5s
 
 
 # - What to Log -
@@ -407,12 +431,14 @@ log_rotation_size = 0			# Automatic rotation of logfiles will
 #debug_print_plan = off
 #debug_pretty_print = on
 #log_checkpoints = off
+log_checkpoints = on
 #log_connections = off
 #log_disconnections = off
 #log_duration = off
 #log_error_verbosity = default		# terse, default, or verbose messages
+log_error_verbosity = verbose
 #log_hostname = off
-log_line_prefix = '< %m >'			# special values:
+###log_line_prefix = '< %m >'			# special values:
 					#   %a = application name
 					#   %u = user name
 					#   %d = database name
@@ -432,12 +458,22 @@ log_line_prefix = '< %m >'			# special values:
 					#        processes
 					#   %% = '%'
 					# e.g. '<%u%%%d> '
+log_line_prefix = '%t %p %c-%l %x %q(%u,%d,%r,%a) '
 #log_lock_waits = off			# log lock waits >= deadlock_timeout
+log_lock_waits = on
 #log_statement = 'none'			# none, ddl, mod, all
+#log_replication_commands = off
 #log_temp_files = -1			# log temporary files equal or larger
 					# than the specified size in kilobytes;
 					# -1 disables, 0 logs all temp files
 log_timezone = 'Japan'
+
+
+# - Process Title -
+
+#cluster_name = ''			# added to process titles if nonempty
+					# (change requires restart)
+#update_process_title = on
 
 
 #------------------------------------------------------------------------------
@@ -451,7 +487,6 @@ log_timezone = 'Japan'
 #track_io_timing = off
 #track_functions = none			# none, pl, all
 #track_activity_query_size = 1024	# (change requires restart)
-#update_process_title = on
 #stats_temp_directory = 'pg_stat_tmp'
 
 
@@ -473,6 +508,7 @@ log_timezone = 'Japan'
 					# their durations, > 0 logs only
 					# actions running at least this number
 					# of milliseconds.
+log_autovacuum_min_duration = 0
 #autovacuum_max_workers = 3		# max number of autovacuum subprocesses
 					# (change requires restart)
 #autovacuum_naptime = 1min		# time between autovacuum runs
@@ -484,6 +520,7 @@ log_timezone = 'Japan'
 #autovacuum_analyze_scale_factor = 0.1	# fraction of table size before analyze
 #autovacuum_freeze_max_age = 200000000	# maximum XID age before forced vacuum
 					# (change requires restart)
+autovacuum_freeze_max_age = 2000000000
 #autovacuum_multixact_freeze_max_age = 400000000	# maximum multixact age
 					# before forced vacuum
 					# (change requires restart)
@@ -493,6 +530,7 @@ log_timezone = 'Japan'
 #autovacuum_vacuum_cost_limit = -1	# default vacuum cost limit for
 					# autovacuum, -1 means use
 					# vacuum_cost_limit
+autovacuum_vacuum_cost_limit = 400
 
 
 #------------------------------------------------------------------------------
@@ -501,7 +539,7 @@ log_timezone = 'Japan'
 
 # - Statement Behavior -
 
-#search_path = '"$user",public'		# schema names
+#search_path = '"$user", public'	# schema names
 #default_tablespace = ''		# a tablespace name, '' uses the default
 #temp_tablespaces = ''			# a list of tablespace names, '' uses
 					# only default tablespace
@@ -520,6 +558,7 @@ log_timezone = 'Japan'
 #xmlbinary = 'base64'
 #xmloption = 'content'
 #gin_fuzzy_search_limit = 0
+#gin_pending_list_limit = 4MB
 
 # - Locale and Formatting -
 
@@ -561,9 +600,6 @@ default_text_search_config = 'pg_catalog.english'
 #deadlock_timeout = 1s
 #max_locks_per_transaction = 64		# min 10
 					# (change requires restart)
-# Note:  Each lock table slot uses ~270 bytes of shared memory, and there are
-# max_locks_per_transaction * (max_connections + max_prepared_transactions)
-# lock table slots.
 #max_pred_locks_per_transaction = 64	# min 10
 					# (change requires restart)
 
@@ -579,6 +615,7 @@ default_text_search_config = 'pg_catalog.english'
 #default_with_oids = off
 #escape_string_warning = on
 #lo_compat_privileges = off
+#operator_precedence_warning = off
 #quote_all_identifiers = off
 #sql_inheritance = on
 #standard_conforming_strings = on

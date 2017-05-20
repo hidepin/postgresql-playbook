@@ -4,6 +4,11 @@
 rhel_subscription:
   username: 'username'
   password: 'password'
+pgdg_version: "9.6-3"
+epel_version: "7-9"
+postgresql_pkg:
+  - "postgresql{{ pgdg_version|regex_replace('-.*', '')|regex_replace('\\.', '') }}-server"
+#  - "postgis2_{{ pgdg_version|regex_replace('-.*', '')|regex_replace('\\.', '') }}"
 
 ############################################################
 # common role settin
@@ -17,8 +22,8 @@ common_user:
   # user/password="hidepin/hidepin123"
   - { name: 'hidepin', password: '$1$SomeSalt$buSRLdQkj4QgWzx.tbjqv1', uid: '1000', group: 'hidepin', gid: '1000' }
 limits_setting:
-  - { domain: 'root', type: 'soft', item: 'nofile', value: '65536' }
-  - { domain: 'root', type: 'hard', item: 'nofile', value: '65536' }
+  - { domain: 'postgres', type: 'soft', item: 'nofile', value: '65536' }
+  - { domain: 'postgres', type: 'hard', item: 'nofile', value: '65536' }
 tuned_profile: 'default'
 tuned_profile_parameter:
   - section: 'vm'

@@ -1,0 +1,6 @@
+[Unit]
+After=tuned.service
+
+[Service]
+Environment="PGDATA={{ postgresql_top_dir }}/pgdata"
+LimitNOFILE=65536
