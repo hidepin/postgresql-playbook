@@ -12,7 +12,7 @@
     - "https://download.postgresql.org/pub/repos/yum/{{ pgdg_version|regex_replace('-.*', '') }}/redhat/rhel-{{ ansible_distribution_major_version }}-x86_64/pgdg-{{ ansible_distribution|lower }}{{ pgdg_version|regex_replace('-.*', '')|regex_replace('\\.', '') }}-{{ pgdg_version }}.noarch.rpm"
     - "https://dl.fedoraproject.org/pub/epel/{{ ansible_distribution_major_version }}/x86_64/{{ (ansible_distribution_major_version == '7')|ternary('e/','') }}epel-release-{{ epel_version }}.noarch.rpm"
 
-- name: packages install
+- name: postgresql packages install
   package:
     name: "{{item}}"
     state: present
