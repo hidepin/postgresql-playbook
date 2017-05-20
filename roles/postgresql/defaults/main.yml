@@ -10,6 +10,10 @@ postgresql_pkg:
   - "postgresql{{ pgdg_version|regex_replace('-.*', '')|regex_replace('\\.', '') }}-contrib"
   - "postgresql{{ pgdg_version|regex_replace('-.*', '')|regex_replace('\\.', '') }}-docs"
 #  - "postgis2_{{ pgdg_version|regex_replace('-.*', '')|regex_replace('\\.', '') }}"
+
+############################################################
+# postgresq.conf parameter
+############################################################
 pg_listen_addresses: "*"
 pg_max_connections: 100
 pg_superuser_reserved_connections: 10

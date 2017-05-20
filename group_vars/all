@@ -13,6 +13,10 @@ postgresql_pkg:
   - "postgresql{{ pgdg_version|regex_replace('-.*', '')|regex_replace('\\.', '') }}-contrib"
   - "postgresql{{ pgdg_version|regex_replace('-.*', '')|regex_replace('\\.', '') }}-docs"
 #  - "postgis2_{{ pgdg_version|regex_replace('-.*', '')|regex_replace('\\.', '') }}"
+
+############################################################
+# postgresq.conf parameter
+############################################################
 pg_max_connections: 100
 pg_shared_buffers: "{{ ansible_memtotal_mb // 10 }}" # MB
 pg_work_mem: 4 # MB
