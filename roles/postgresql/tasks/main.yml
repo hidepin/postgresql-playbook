@@ -46,6 +46,7 @@
     owner: postgres
     group: postgres
     mode: 700
+  notify: postgresql restart
 
 - name: postgres sysconfig setting
   template:
@@ -54,6 +55,7 @@
     owner: root
     group: root
     mode: 644
+  notify: postgresql restart
   when: ansible_distribution_major_version == "6"
 
 - name: create postgresql systemd dir
@@ -73,6 +75,7 @@
     group: root
     mode: 0644
     backup: yes
+  notify: postgresql restart
   when: ansible_distribution_major_version == "7"
 
 - name: vm.nr_hugepages check
