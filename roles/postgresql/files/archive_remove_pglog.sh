@@ -4,8 +4,12 @@
 #############################################################################
 
 log_directory="${1}"
+expired_date="${2:--1}"
 archive_directory="${log_directory}/log_archive"
 archive_filename="${archive_directory}/$(date +postgresql-%Y%m%d.tar.gz)"
+
+# check expired_date
+[ ${expired_date} -ge 1 q] || exit 1
 
 # change the current directory to log directory
 cd "${log_directory}" || exit 1
@@ -25,6 +29,18 @@ if [ ${#target_files[@]} -gt 0 ] ; then
 	fi
 
 	tar cfz "${archive_filename}" ${target_files[@]} --remove-files || exit 1
+fi
+
+# change the current directory to log directory
+cd "${archive_directory}" || exit 1
+
+# search the tar log files
+target_files=($(find -maxdepth 1 -type f -name "*.tar.gz" -daystart -ctime +${expired_date})) || exit 1
+
+# remove archive file
+if [ ${#target_files[@]} -gt 0 ] ; then
+
+    rm ${target_files[@]} || exit 1
 fi
 
 exit 0

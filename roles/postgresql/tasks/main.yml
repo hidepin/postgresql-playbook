@@ -122,7 +122,7 @@
     notify: postgresql restart
 
   always:
-  - name: common backup settings
+  - name: postgresql backup settings
     include: backup.yml
     with_flattened:
       - "{{ is_dot_bash_profile_setting|default() }}"
@@ -170,5 +170,23 @@
   - name: stats database add
     command: "/usr/pgsql-{{ pgdg_version|regex_replace('-.*', '') }}/bin/createdb -U {{ pg_statsinfo_user }} {{ pg_statsinfo_database }}"
     when: statsinfo_database_check.stdout == ''
+
+  - name: archive_remove_pglog.sh
+    copy:
+      src: archive_remove_pglog.sh
+      dest: /usr/pgsql-{{ pgdg_version|regex_replace('-.*', '') }}/bin/archive_remove_pglog.sh
+      owner: root
+      group: root
+      mode: 0755
+      backup: yes
+    register: is_archive_remove_pglog_setting
+
+  always:
+  - name: pg_statsinfo backup settings
+    include: backup.yml
+    with_flattened:
+      - "{{ is_archive_remove_pglog_setting|default() }}"
+    loop_control:
+      loop_var: backup_item
 
   when: pg_statsinfo_enabled
