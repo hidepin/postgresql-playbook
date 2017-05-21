@@ -12,12 +12,22 @@
     - "https://download.postgresql.org/pub/repos/yum/{{ pgdg_version|regex_replace('-.*', '') }}/redhat/rhel-{{ ansible_distribution_major_version }}-x86_64/pgdg-{{ ansible_distribution|lower }}{{ pgdg_version|regex_replace('-.*', '')|regex_replace('\\.', '') }}-{{ pgdg_version }}.noarch.rpm"
     - "https://dl.fedoraproject.org/pub/epel/{{ ansible_distribution_major_version }}/x86_64/{{ (ansible_distribution_major_version == '7')|ternary('e/','') }}epel-release-{{ epel_version }}.noarch.rpm"
 
-- name: packages install
-  yum:
+- name: postgresql packages install
+  package:
     name: "{{item}}"
     state: present
   with_items:
     "{{ postgresql_pkg }}"
+
+- name: pg_statsinfo install
+  yum:
+    name: "https://downloads.sourceforge.net/project/pgstatsinfo/pg_statsinfo/{{ pg_statsinfo_version|regex_replace('-.*', '') }}/pg_statsinfo-{{ pg_statsinfo_version }}.pg{{ pgdg_version|regex_replace('-.*', '')|regex_replace('\\.', '') }}.rhel{{ ansible_distribution_major_version }}.x86_64.rpm"
+    state: present
+  register: result
+  until: result | success
+  retries: 3
+  delay: 5
+  when: pg_statsinfo_enabled
 
 - name: create postgresql dir
   file:
@@ -112,7 +122,7 @@
     notify: postgresql restart
 
   always:
-  - name: common backup settings
+  - name: postgresql backup settings
     include: backup.yml
     with_flattened:
       - "{{ is_dot_bash_profile_setting|default() }}"
@@ -132,12 +142,51 @@
 
 - block:
   - name: pg_stat_statement enabled check
-    command: psql -U postgres -d postgres -t -c "select extname from pg_extension where extname = 'pg_stat_statements'"
+    command: "/usr/pgsql-{{ pgdg_version|regex_replace('-.*', '') }}/bin/psql -U postgres -d postgres -t -c \"select extname from pg_extension where extname = 'pg_stat_statements'\""
     register: pg_stat_statement_enabled
     changed_when: false
 
   - name: pg_stat_statement enabled
-    command: psql -U postgres -d postgres -c "CREATE EXTENSION pg_stat_statements"
+    command: "/usr/pgsql-{{ pgdg_version|regex_replace('-.*', '') }}/bin/psql -U postgres -d postgres -c \"CREATE EXTENSION pg_stat_statements\""
     when: pg_stat_statement_enabled.stdout == ''
 
-  when: pg_stat_statement_enabled
+  when: pg_stat_statement_only_enabled or pg_statsinfo_enabled
+
+- block:
+  - name: statsinfo user check
+    command: "/usr/pgsql-{{ pgdg_version|regex_replace('-.*', '') }}/bin/psql -U postgres -d postgres -t -c \"select usename from pg_user where usename = '{{ pg_statsinfo_user }}'\""
+    register: statsinfo_user_check
+    changed_when: false
+
+  - name: statsinfo user add
+    command: "/usr/pgsql-{{ pgdg_version|regex_replace('-.*', '') }}/bin/createuser -U postgres -S -d -R {{ pg_statsinfo_user }}"
+    when: statsinfo_user_check.stdout == ''
+
+  - name: stats database check
+    command: "/usr/pgsql-{{ pgdg_version|regex_replace('-.*', '') }}/bin/psql -U postgres -d postgres -t -c \"select datname from pg_database where datname = '{{ pg_statsinfo_database }}'\""
+    register: statsinfo_database_check
+    changed_when: false
+
+  - name: stats database add
+    command: "/usr/pgsql-{{ pgdg_version|regex_replace('-.*', '') }}/bin/createdb -U {{ pg_statsinfo_user }} {{ pg_statsinfo_database }}"
+    when: statsinfo_database_check.stdout == ''
+
+  - name: archive_remove_pglog.sh
+    copy:
+      src: archive_remove_pglog.sh
+      dest: /usr/pgsql-{{ pgdg_version|regex_replace('-.*', '') }}/bin/archive_remove_pglog.sh
+      owner: root
+      group: root
+      mode: 0755
+      backup: yes
+    register: is_archive_remove_pglog_setting
+
+  always:
+  - name: pg_statsinfo backup settings
+    include: backup.yml
+    with_flattened:
+      - "{{ is_archive_remove_pglog_setting|default() }}"
+    loop_control:
+      loop_var: backup_item
+
+  when: pg_statsinfo_enabled
