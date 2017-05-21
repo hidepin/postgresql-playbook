@@ -151,7 +151,9 @@ dynamic_shared_memory_type = posix	# the default is the first option
 #max_files_per_process = 1000		# min 25
 					# (change requires restart)
 #shared_preload_libraries = ''		# (change requires restart)
-{% if pg_statsinfo_enabled %}
+{% if pg_statsinfo_enabled and pg_store_plans_enabled %}
+shared_preload_libraries = 'pg_statsinfo,pg_stat_statements,pg_store_plans'
+{% elif pg_statsinfo_enabled %}
 shared_preload_libraries = 'pg_statsinfo,pg_stat_statements'
 {% elif pg_stat_statement_only_enabled %}
 shared_preload_libraries = 'pg_stat_statements'
