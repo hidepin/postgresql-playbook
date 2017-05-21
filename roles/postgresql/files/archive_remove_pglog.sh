@@ -7,7 +7,7 @@ log_directory="${1}"
 archive_directory="${log_directory}/log_archive"
 archive_filename="${archive_directory}/$(date +postgresql-%Y%m%d.tar.gz)"
 
-# change the current directory to log directory 
+# change the current directory to log directory
 cd "${log_directory}" || exit 1
 
 # create a directory that store archive file
