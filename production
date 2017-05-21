@@ -1,1 +1,4 @@
+[postgresql]
 xxx.xxx.xxx.xxx
+
+[pg_stats_reporter]

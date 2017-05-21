@@ -1,9 +1,17 @@
 ---
 # file: all.yml
-- hosts: all
+- hosts: postgresql
   roles:
     - { role: common, when: "ansible_os_family == 'RedHat' and exec_common_role" }
     - { role: postgresql, when: "ansible_os_family == 'RedHat'" }
+
+  environment:
+    "{{ proxy_env }}"
+
+- hosts: pg_stats_reporter
+  roles:
+    - { role: common, when: "ansible_os_family == 'RedHat' and exec_common_role" }
+    - { role: pg_stats_reporter, when: "ansible_os_family == 'RedHat'" }
 
   environment:
     "{{ proxy_env }}"

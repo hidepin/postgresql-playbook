@@ -1,0 +1,5 @@
+---
+# defaults file for pg_stats_reporter
+pg_stats_reporter_version: "3.2.2-1"
+pg_statsinfo_user: "statsinfo"
+pg_statsinfo_database: "stats"
