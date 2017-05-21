@@ -150,25 +150,25 @@
     command: "/usr/pgsql-{{ pgdg_version|regex_replace('-.*', '') }}/bin/psql -U postgres -d postgres -c \"CREATE EXTENSION pg_stat_statements\""
     when: pg_stat_statement_enabled.stdout == ''
 
-  when: pg_stat_statement_enabled
+  when: pg_stat_statement_only_enabled or pg_statsinfo_enabled
 
 - block:
   - name: statsinfo user check
-    command: "/usr/pgsql-{{ pgdg_version|regex_replace('-.*', '') }}/bin/psql -U postgres -d postgres -t -c \"select usename from pg_user where usename = 'statsinfo'\""
+    command: "/usr/pgsql-{{ pgdg_version|regex_replace('-.*', '') }}/bin/psql -U postgres -d postgres -t -c \"select usename from pg_user where usename = '{{ pg_statsinfo_user }}'\""
     register: statsinfo_user_check
     changed_when: false
 
   - name: statsinfo user add
-    command: "/usr/pgsql-{{ pgdg_version|regex_replace('-.*', '') }}/bin/createuser -U postgres -S -d -R statsinfo"
+    command: "/usr/pgsql-{{ pgdg_version|regex_replace('-.*', '') }}/bin/createuser -U postgres -S -d -R {{ pg_statsinfo_user }}"
     when: statsinfo_user_check.stdout == ''
 
   - name: stats database check
-    command: "/usr/pgsql-{{ pgdg_version|regex_replace('-.*', '') }}/bin/psql -U postgres -d postgres -t -c \"select datname from pg_database where datname = 'stats'\""
+    command: "/usr/pgsql-{{ pgdg_version|regex_replace('-.*', '') }}/bin/psql -U postgres -d postgres -t -c \"select datname from pg_database where datname = '{{ pg_statsinfo_database }}'\""
     register: statsinfo_database_check
     changed_when: false
 
   - name: stats database add
-    command: "/usr/pgsql-{{ pgdg_version|regex_replace('-.*', '') }}/bin/createdb -U statsinfo stats"
+    command: "/usr/pgsql-{{ pgdg_version|regex_replace('-.*', '') }}/bin/createdb -U {{ pg_statsinfo_user }} {{ pg_statsinfo_database }}"
     when: statsinfo_database_check.stdout == ''
 
   when: pg_statsinfo_enabled
