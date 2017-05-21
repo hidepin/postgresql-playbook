@@ -8,6 +8,7 @@ pgdg_version: "9.6-3"
 epel_version: "7-9"
 pg_statsinfo_version: "3.2.3-1"
 pg_store_plans_version: "1.1-1"
+pg_stats_reporter_version: "3.2.2-1"
 postgresql_pkg:
   - "postgresql{{ pgdg_version|regex_replace('-.*', '')|regex_replace('\\.', '') }}"
   - "postgresql{{ pgdg_version|regex_replace('-.*', '')|regex_replace('\\.', '') }}-libs"
