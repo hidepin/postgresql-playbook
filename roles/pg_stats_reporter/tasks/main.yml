@@ -41,3 +41,29 @@
   until: result | success
   retries: 3
   delay: 5
+
+- block:
+  - name: pg_stats_reporter setting
+    template:
+      src: pg_stats_reporter.ini.j2
+      dest: /etc/pg_stats_reporter.ini
+      owner: root
+      group: root
+      mode: 0644
+      backup: yes
+    register: is_pg_stats_reporter_ini_setting
+    notify: httpd restart
+
+  always:
+  - name: pg_stats_reporter backup settings
+    include: backup.yml
+    with_flattened:
+      - "{{ is_pg_stats_reporter_ini_setting|default() }}"
+    loop_control:
+      loop_var: backup_item
+
+- name: httpd start
+  service:
+    name: httpd
+    state: started
+    enabled: yes

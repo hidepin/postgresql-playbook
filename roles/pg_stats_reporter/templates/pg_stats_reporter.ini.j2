@@ -15,16 +15,16 @@ log_page_size = 1000
 ; repository DB setting section
 ;-------------------------------------
 
-[sample]
+[{{ hostvars[groups.postgresql[0]].ansible_hostname }}]
 
 ;-------------------------------------
 ; database connection
 ;-------------------------------------
 
-host = localhost
+host = {{ hostvars[groups.postgresql[0]].ansible_default_ipv4.address }}
 port = 5432
-dbname = postgres
-username = postgres
+dbname = {{ pg_statsinfo_database }}
+username = {{ pg_statsinfo_user }}
 ;password =
 
 ;-------------------------------------

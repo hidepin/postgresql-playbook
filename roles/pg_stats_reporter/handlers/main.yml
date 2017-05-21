@@ -1,0 +1,6 @@
+---
+# handlers file for pg_stats_reporter
+- name: httpd restart
+  service:
+    name: httpd
+    state: restarted
