@@ -49,7 +49,7 @@
 
     - name: postgis2 packages install
       package:
-        name: postgis2
+        name: "postgis2_{{ pgdg_version|regex_replace('-.*', '')|regex_replace('\\.', '') }}"
         state: present
 
   when: postgis2_enabled
