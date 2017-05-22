@@ -679,6 +679,9 @@ default_text_search_config = 'pg_catalog.english'
 #------------------------------------------------------------------------------
 
 # Add settings for extensions here
+pg_stat_statements.max = {{ pg_pg_stat_statements_max }}
+pg_store_plans.max = {{ pg_pg_store_plans_max }}
+pg_statsinfo.stat_statements_max = {{ pg_pg_statsinfo_stat_statements_max }}
 pg_statsinfo.textlog_line_prefix = '{{ pg_log_line_prefix }}'
 pg_statsinfo.snapshot_interval = {{ pg_pg_statsinfo_snapshot_interval }}min
 pg_statsinfo.repository_server = 'user={{ pg_statsinfo_user }} dbname={{ pg_statsinfo_database }}'
