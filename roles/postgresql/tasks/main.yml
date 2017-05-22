@@ -2,15 +2,12 @@
 # file: roles/postgresql/tasks/main.yml
 - name: postgresql repo install
   yum:
-    name: "{{ item }}"
+    name: "https://download.postgresql.org/pub/repos/yum/{{ pgdg_version|regex_replace('-.*', '') }}/redhat/rhel-{{ ansible_distribution_major_version }}-x86_64/pgdg-{{ ansible_distribution|lower }}{{ pgdg_version|regex_replace('-.*', '')|regex_replace('\\.', '') }}-{{ pgdg_version }}.noarch.rpm"
     state: present
   register: result
   until: result | success
   retries: 3
   delay: 5
-  with_items:
-    - "https://download.postgresql.org/pub/repos/yum/{{ pgdg_version|regex_replace('-.*', '') }}/redhat/rhel-{{ ansible_distribution_major_version }}-x86_64/pgdg-{{ ansible_distribution|lower }}{{ pgdg_version|regex_replace('-.*', '')|regex_replace('\\.', '') }}-{{ pgdg_version }}.noarch.rpm"
-    - "https://dl.fedoraproject.org/pub/epel/{{ ansible_distribution_major_version }}/x86_64/{{ (ansible_distribution_major_version == '7')|ternary('e/','') }}epel-release-{{ epel_version }}.noarch.rpm"
 
 - name: postgresql packages install
   package:
@@ -38,6 +35,24 @@
   retries: 3
   delay: 5
   when: pg_store_plans_enabled
+
+- block:
+    - name: epel install
+      yum:
+        name: "https://dl.fedoraproject.org/pub/epel/{{ ansible_distribution_major_version }}/x86_64/{{ (ansible_distribution_major_version == '7')|ternary('e/','') }}epel-release-{{ epel_version }}.noarch.rpm"
+        state: present
+      register: result
+      until: result | success
+      retries: 3
+      delay: 5
+      when: ansible_distribution == "RedHat"
+
+    - name: postgis2 packages install
+      package:
+        name: postgis2
+        state: present
+
+  when: postgis2_enabled
 
 - name: create postgresql dir
   file:

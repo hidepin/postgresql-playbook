@@ -15,7 +15,7 @@ postgresql_pkg:
   - "postgresql{{ pgdg_version|regex_replace('-.*', '')|regex_replace('\\.', '') }}-server"
   - "postgresql{{ pgdg_version|regex_replace('-.*', '')|regex_replace('\\.', '') }}-contrib"
   - "postgresql{{ pgdg_version|regex_replace('-.*', '')|regex_replace('\\.', '') }}-docs"
-#  - "postgis2_{{ pgdg_version|regex_replace('-.*', '')|regex_replace('\\.', '') }}"
+postgis2_enabled: False
 pg_stat_statement_only_enabled: True
 pg_statsinfo_enabled: True
 pg_store_plans_enabled: True
