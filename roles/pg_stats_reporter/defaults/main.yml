@@ -1,5 +1,9 @@
 ---
 # defaults file for pg_stats_reporter
+proxy_env:
+  no_proxy: '*'
+#  http_proxy: http://172.16.111.1:8080
+#  https_proxy: http://172.16.111.1:8080
 pg_stats_reporter_version: "3.2.2-1"
 pg_statsinfo_user: "statsinfo"
 pg_statsinfo_database: "stats"
