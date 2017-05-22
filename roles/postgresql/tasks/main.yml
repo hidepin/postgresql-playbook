@@ -37,7 +37,7 @@
   when: pg_store_plans_enabled
 
 - block:
-    - name: epel install
+    - name: (rhel) epel install
       yum:
         name: "https://dl.fedoraproject.org/pub/epel/{{ ansible_distribution_major_version }}/x86_64/{{ (ansible_distribution_major_version == '7')|ternary('e/','') }}epel-release-{{ epel_version }}.noarch.rpm"
         state: present
@@ -46,6 +46,16 @@
       retries: 3
       delay: 5
       when: ansible_distribution == "RedHat"
+
+    - name: (centos) epel install
+      yum:
+        name: epel-release
+        state: present
+      register: result
+      until: result | success
+      retries: 3
+      delay: 5
+      when: ansible_distribution == "CentOS"
 
     - name: postgis2 packages install
       package:
