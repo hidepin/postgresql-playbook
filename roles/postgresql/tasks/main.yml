@@ -202,6 +202,15 @@
   when: pg_stat_statement_only_enabled or pg_statsinfo_enabled
 
 - block:
+  - name: pg_store_plans repo db enabled check
+    command: "/usr/pgsql-{{ pgdg_version|regex_replace('-.*', '') }}/bin/psql -U postgres -d stats -t -c \"SELECT extname FROM pg_extension WHERE extname = 'pg_store_plans'\""
+    register: pg_store_plans_repo_db_enabled
+    changed_when: false
+
+  - name: pg_store_plans repo db enabled
+    command: "/usr/pgsql-{{ pgdg_version|regex_replace('-.*', '') }}/bin/psql -U postgres -d stats -c \"CREATE EXTENSION pg_store_plans\""
+    when: pg_store_plans_repo_db_enabled.stdout == ''
+
   - name: pg_store_plans enabled check
     command: "/usr/pgsql-{{ pgdg_version|regex_replace('-.*', '') }}/bin/psql -U postgres -d postgres -t -c \"SELECT extname FROM pg_extension WHERE extname = 'pg_store_plans'\""
     register: pg_store_plans_enabled
