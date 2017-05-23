@@ -10,18 +10,19 @@
 install_directory = /var/www
 log_page_size = 1000
 
+{% for host in groups.postgresql %}
 
 ;-------------------------------------
 ; repository DB setting section
 ;-------------------------------------
 
-[{{ hostvars[groups.postgresql[0]].ansible_hostname }}]
+[{{ hostvars[host].ansible_hostname }}]
 
 ;-------------------------------------
 ; database connection
 ;-------------------------------------
 
-host = {{ hostvars[groups.postgresql[0]].ansible_default_ipv4.address }}
+host = {{ hostvars[host].ansible_default_ipv4.address }}
 port = 5432
 dbname = {{ pg_statsinfo_database }}
 username = {{ pg_statsinfo_user }}
@@ -111,3 +112,4 @@ runtime_params = true               ; Run-time parameters
 
 ; -- Profiles --
 profiles = false                    ; Profiles
+{% endfor %}
