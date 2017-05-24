@@ -694,6 +694,8 @@ pg_statsinfo.textlog_line_prefix = '{{ pg_log_line_prefix }}'
 pg_statsinfo.snapshot_interval = {{ pg_pg_statsinfo_snapshot_interval }}min
 {% if 'postgresql_with_pg_statsinfo_repodb' in group_names %}
 pg_statsinfo.repository_server = 'user={{ pg_statsinfo_user }} dbname={{ pg_statsinfo_database }}'
+{% elif pg_statsinfo_repository_server is defined %}
+pg_statsinfo.repository_server = 'host={{ hostvars[pg_statsinfo_repository_server].ansible_default_ipv4.address }} user={{ pg_statsinfo_user }} dbname={{ pg_statsinfo_database }}'
 {% else %}
 pg_statsinfo.repository_server = 'host={{ hostvars[groups.postgresql_with_pg_statsinfo_repodb[0]].ansible_default_ipv4.address }} user={{ pg_statsinfo_user }} dbname={{ pg_statsinfo_database }}'
 {% endif %}
