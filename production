@@ -1,8 +1,13 @@
 [postgresql]
 xxx.xxx.xxx.xxx
 
+[postgresql_with_pg_statsinfo_repodb]
+xxx.xxx.xxx.xxx
+
 [pg_stats_reporter]
+xxx.xxx.xxx.xxx
 
 [common:children]
 postgresql
+postgresql_with_pg_statsinfo_repodb
 pg_stats_reporter

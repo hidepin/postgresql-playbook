@@ -151,12 +151,20 @@ dynamic_shared_memory_type = posix	# the default is the first option
 #max_files_per_process = 1000		# min 25
 					# (change requires restart)
 #shared_preload_libraries = ''		# (change requires restart)
-{% if pg_statsinfo_enabled and pg_store_plans_enabled %}
+{% if groups['postgresql_with_pg_statsinfo_repodb']|length != 0 and pg_stat_statement_enabled and pg_store_plans_enabled %}
 shared_preload_libraries = 'pg_statsinfo,pg_stat_statements,pg_store_plans'
-{% elif pg_statsinfo_enabled %}
+{% elif groups['postgresql_with_pg_statsinfo_repodb']|length != 0 and pg_stat_statement_enabled %}
 shared_preload_libraries = 'pg_statsinfo,pg_stat_statements'
-{% elif pg_stat_statement_only_enabled %}
+{% elif groups['postgresql_with_pg_statsinfo_repodb']|length != 0 and pg_store_plans_enabled %}
+shared_preload_libraries = 'pg_statsinfo,pg_store_plans'
+{% elif groups['postgresql_with_pg_statsinfo_repodb']|length != 0 %}
+shared_preload_libraries = 'pg_statsinfo'
+{% elif pg_stat_statement_enabled and pg_store_plans_enabled %}
+shared_preload_libraries = 'pg_stat_statements,pg_store_plans'
+{% elif pg_stat_statement_enabled %}
 shared_preload_libraries = 'pg_stat_statements'
+{% elif pg_store_plans_enabled %}
+shared_preload_libraries = 'pg_store_plans'
 {% endif %}
 
 # - Cost-Based Vacuum Delay -
@@ -348,7 +356,7 @@ effective_cache_size = {{ pg_effective_cache_size }}GB
 					# stderr, csvlog, syslog, and eventlog,
 					# depending on platform.  csvlog
 					# requires logging_collector to be on.
-{% if pg_statsinfo_enabled %}
+{% if groups['postgresql_with_pg_statsinfo_repodb']|length != 0 %}
 log_destination = 'csvlog'
 {% else %}
 log_destination = 'stderr'
@@ -366,7 +374,7 @@ logging_collector = on			# Enable capturing of stderr and csvlog
 log_directory = '{{ pg_log_directory }}'
 ###log_filename = 'postgresql-%a.log'	# log file name pattern,
 					# can include strftime() escapes
-{% if pg_statsinfo_enabled %}
+{% if groups['postgresql_with_pg_statsinfo_repodb']|length != 0 %}
 log_filename = 'postgresql-%Y-%m-%d_%H%M%S.log'
 {% else %}
 log_filename = '{{ pg_log_filename }}'
@@ -477,7 +485,7 @@ log_error_verbosity = {{ pg_log_error_verbosity }}
 					#        processes
 					#   %% = '%'
 					# e.g. '<%u%%%d> '
-{% if pg_statsinfo_enabled %}
+{% if groups['postgresql_with_pg_statsinfo_repodb']|length != 0 %}
 log_line_prefix = '< %m >'
 {% else %}
 log_line_prefix = '{{ pg_log_line_prefix }}'
@@ -510,7 +518,7 @@ log_timezone = 'Japan'
 #track_counts = on
 #track_io_timing = off
 #track_functions = none			# none, pl, all
-{% if pg_statsinfo_enabled %}
+{% if groups['postgresql_with_pg_statsinfo_repodb']|length != 0 %}
 track_functions = all
 {% endif %}
 #track_activity_query_size = 1024	# (change requires restart)
@@ -684,7 +692,11 @@ pg_store_plans.max = {{ pg_pg_store_plans_max }}
 pg_statsinfo.stat_statements_max = {{ pg_pg_statsinfo_stat_statements_max }}
 pg_statsinfo.textlog_line_prefix = '{{ pg_log_line_prefix }}'
 pg_statsinfo.snapshot_interval = {{ pg_pg_statsinfo_snapshot_interval }}min
+{% if 'postgresql_with_pg_statsinfo_repodb' in group_names %}
 pg_statsinfo.repository_server = 'user={{ pg_statsinfo_user }} dbname={{ pg_statsinfo_database }}'
+{% else %}
+pg_statsinfo.repository_server = 'host={{ hostvars[groups.postgresql_with_pg_statsinfo_repodb[0]].ansible_default_ipv4.address }} user={{ pg_statsinfo_user }} dbname={{ pg_statsinfo_database }}'
+{% endif %}
 pg_statsinfo.enable_maintenance = '{{ pg_pg_statsinfo_enable_maintenance }}'
 pg_statsinfo.maintenance_time = '{{ pg_pg_statsinfo_maintenance_time }}'
 pg_statsinfo.repository_keepday = {{ pg_pg_statsinfo_repository_keepday }}

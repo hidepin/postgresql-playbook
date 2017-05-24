@@ -24,7 +24,7 @@
   until: result | success
   retries: 3
   delay: 5
-  when: pg_statsinfo_enabled
+  when: "{{ groups['postgresql_with_pg_statsinfo_repodb']|length }} != 0"
 
 - name: pg_store_plans install
   yum:
@@ -194,6 +194,9 @@
     command: "/usr/pgsql-{{ pgdg_version|regex_replace('-.*', '') }}/bin/createdb -U {{ pg_statsinfo_user }} {{ pg_statsinfo_database }}"
     when: statsinfo_database_check.stdout == ''
 
+  when: "'postgresql_with_pg_statsinfo_repodb' in group_names"
+
+- block:
   - name: archive_remove_pglog.sh
     copy:
       src: archive_remove_pglog.sh
@@ -212,7 +215,7 @@
     loop_control:
       loop_var: backup_item
 
-  when: pg_statsinfo_enabled
+  when: "{{ groups['postgresql_with_pg_statsinfo_repodb']|length }} != 0"
 
 - block:
   - name: pg_stat_statement enabled check
@@ -224,17 +227,18 @@
     command: "/usr/pgsql-{{ pgdg_version|regex_replace('-.*', '') }}/bin/psql -U postgres -d postgres -c \"CREATE EXTENSION pg_stat_statements\""
     when: pg_stat_statement_enabled.stdout == ''
 
-  when: pg_stat_statement_only_enabled or pg_statsinfo_enabled
+  when: pg_stat_statement_enabled
 
 - block:
   - name: pg_store_plans repo db enabled check
     command: "/usr/pgsql-{{ pgdg_version|regex_replace('-.*', '') }}/bin/psql -U postgres -d stats -t -c \"SELECT extname FROM pg_extension WHERE extname = 'pg_store_plans'\""
     register: pg_store_plans_repo_db_enabled
     changed_when: false
+    when: "'postgresql_with_pg_statsinfo_repodb' in group_names"
 
   - name: pg_store_plans repo db enabled
     command: "/usr/pgsql-{{ pgdg_version|regex_replace('-.*', '') }}/bin/psql -U postgres -d stats -c \"CREATE EXTENSION pg_store_plans\""
-    when: pg_store_plans_repo_db_enabled.stdout == ''
+    when: "'postgresql_with_pg_statsinfo_repodb' in group_names and pg_store_plans_repo_db_enabled.stdout == ''"
 
   - name: pg_store_plans enabled check
     command: "/usr/pgsql-{{ pgdg_version|regex_replace('-.*', '') }}/bin/psql -U postgres -d postgres -t -c \"SELECT extname FROM pg_extension WHERE extname = 'pg_store_plans'\""
@@ -245,4 +249,4 @@
     command: "/usr/pgsql-{{ pgdg_version|regex_replace('-.*', '') }}/bin/psql -U postgres -d postgres -c \"CREATE EXTENSION pg_store_plans\""
     when: pg_store_plans_enabled.stdout == ''
 
-  when: pg_store_plans_enabled and pg_statsinfo_enabled
+  when: "{{ groups['postgresql_with_pg_statsinfo_repodb']|length }} != 0"
