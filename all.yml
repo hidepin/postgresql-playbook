@@ -3,20 +3,23 @@
 - hosts: common
   roles:
     - { role: common, when: "ansible_os_family == 'RedHat' and exec_common_role" }
-
   environment:
     "{{ proxy_env }}"
 
 - hosts: postgresql
   roles:
-    - { role: postgresql, when: "ansible_os_family == 'RedHat'" }
+    - { role: postgresql, pg_statsinfo_repodb_enabled: False, when: "ansible_os_family == 'RedHat'" }
+  environment:
+    "{{ proxy_env }}"
 
+- hosts: postgresql_with_pg_statsinfo_repodb
+  roles:
+    - { role: postgresql, pg_statsinfo_repodb_enabled: True, when: "ansible_os_family == 'RedHat'" }
   environment:
     "{{ proxy_env }}"
 
 - hosts: pg_stats_reporter
   roles:
     - { role: pg_stats_reporter, when: "ansible_os_family == 'RedHat'" }
-
   environment:
     "{{ proxy_env }}"
