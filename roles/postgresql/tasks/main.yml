@@ -15,6 +15,10 @@
     state: present
   with_items:
     "{{ postgresql_pkg }}"
+  register: result
+  until: result | success
+  retries: 3
+  delay: 5
 
 - name: pg_statsinfo install
   yum:
@@ -61,6 +65,10 @@
       package:
         name: "postgis2_{{ pgdg_version|regex_replace('-.*', '')|regex_replace('\\.', '') }}"
         state: present
+      register: result
+      until: result | success
+      retries: 3
+      delay: 5
 
   when: postgis2_enabled
 
