@@ -41,34 +41,34 @@
   when: pg_store_plans_enabled
 
 - block:
-    - name: (rhel) epel install
-      yum:
-        name: "https://dl.fedoraproject.org/pub/epel/{{ ansible_distribution_major_version }}/x86_64/{{ (ansible_distribution_major_version == '7')|ternary('e/','') }}epel-release-{{ epel_version }}.noarch.rpm"
-        state: present
-      register: result
-      until: result | success
-      retries: 3
-      delay: 5
-      when: ansible_distribution == "RedHat"
+  - name: (rhel) epel install
+    yum:
+      name: "https://dl.fedoraproject.org/pub/epel/{{ ansible_distribution_major_version }}/x86_64/{{ (ansible_distribution_major_version == '7')|ternary('e/','') }}epel-release-{{ epel_version }}.noarch.rpm"
+      state: present
+    register: result
+    until: result | success
+    retries: 3
+    delay: 5
+    when: ansible_distribution == "RedHat"
 
-    - name: (centos) epel install
-      yum:
-        name: epel-release
-        state: present
-      register: result
-      until: result | success
-      retries: 3
-      delay: 5
-      when: ansible_distribution == "CentOS"
+  - name: (centos) epel install
+    yum:
+      name: epel-release
+      state: present
+    register: result
+    until: result | success
+    retries: 3
+    delay: 5
+    when: ansible_distribution == "CentOS"
 
-    - name: postgis2 packages install
-      package:
-        name: "postgis2_{{ pgdg_version|regex_replace('-.*', '')|regex_replace('\\.', '') }}"
-        state: present
-      register: result
-      until: result | success
-      retries: 3
-      delay: 5
+  - name: postgis2 packages install
+    package:
+      name: "postgis2_{{ pgdg_version|regex_replace('-.*', '')|regex_replace('\\.', '') }}"
+      state: present
+    register: result
+    until: result | success
+    retries: 3
+    delay: 5
 
   when: postgis2_enabled
 
