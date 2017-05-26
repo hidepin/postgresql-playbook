@@ -30,9 +30,13 @@
   delay: 5
   when: "{{ groups['postgresql_with_pg_statsinfo_repodb']|length }} != 0"
 
+- name: register pg_store_plans url
+  include: pg_store_plans_url.yml
+  when: pg_store_plans_enabled
+
 - name: pg_store_plans install
   yum:
-    name: "https://ja.osdn.net/frs/redir.php?m=jaist&f=%2Fpgstoreplans%2F66867%2Fpg_store_plans{{ pgdg_version|regex_replace('-.*', '')|regex_replace('\\.', '') }}-{{ pg_store_plans_version }}.el{{ ansible_distribution_major_version }}.x86_64.rpm"
+    name: "{{ pg_store_plans_url }}"
     state: present
   register: result
   until: result | success

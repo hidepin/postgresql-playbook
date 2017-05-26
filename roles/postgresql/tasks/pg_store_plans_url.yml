@@ -1,0 +1,39 @@
+---
+# file: roles/postgresql/tasks/pg_store_plans_url.yml
+- name: pg_store_plans_tag default
+  set_fact: pg_store_plans_tag="error"
+
+- name: pg_store_plans_tag postgresql9.4 and pg_store_plans1.0-1
+  set_fact: pg_store_plans_tag="63902"
+  when: >
+    "{{ pgdg_version|regex_replace('-.*', '') }}" == "9.4" and
+    "{{ pg_store_plans_version }}" == "1.0-1" and
+    "{{ ansible_distribution_major_version }}" == "7"
+
+- name: pg_store_plans_tag postgresql9.5 and pg_store_plans1.0-1
+  set_fact: pg_store_plans_tag="65629"
+  when: >
+    "{{ pgdg_version|regex_replace('-.*', '') }}" == "9.5" and
+    "{{ pg_store_plans_version }}" == "1.0-1"
+
+- name: pg_store_plans_tag postgresql9.4 and pg_store_plans1.1-1
+  set_fact: pg_store_plans_tag="66332"
+  when: >
+    "{{ pgdg_version|regex_replace('-.*', '') }}" == "9.4" and
+    "{{ pg_store_plans_version }}" == "1.1-1"
+
+- name: pg_store_plans_tag postgresql9.5 and pg_store_plans1.1-1
+  set_fact: pg_store_plans_tag="66333"
+  when: >
+    "{{ pgdg_version|regex_replace('-.*', '') }}" == "9.5" and
+    "{{ pg_store_plans_version }}" == "1.1-1"
+
+- name: pg_store_plans_tag postgresql9.6 and pg_store_plans1.1-1
+  set_fact: pg_store_plans_tag="66867"
+  when: >
+    "{{ pgdg_version|regex_replace('-.*', '') }}" == "9.6" and
+    "{{ pg_store_plans_version }}" == "1.1-1" and
+    "{{ ansible_distribution_major_version }}" == "7"
+
+- name: pg_store_plans_
+  set_fact: pg_store_plans_url="https://ja.osdn.net/frs/redir.php?m=jaist&f=%2Fpgstoreplans%2F{{ pg_store_plans_tag }}%2Fpg_store_plans{{ pgdg_version|regex_replace('-.*', '')|regex_replace('\\.', '') }}-{{ pg_store_plans_version }}.el{{ ansible_distribution_major_version }}.x86_64.rpm"
