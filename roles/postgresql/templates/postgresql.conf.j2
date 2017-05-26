@@ -151,12 +151,20 @@ dynamic_shared_memory_type = posix	# the default is the first option
 #max_files_per_process = 1000		# min 25
 					# (change requires restart)
 #shared_preload_libraries = ''		# (change requires restart)
-{% if groups['postgresql_with_pg_statsinfo_repodb']|length != 0 and pg_stat_statement_enabled and pg_store_plans_enabled %}
+{% if groups['postgresql_with_pg_statsinfo_repodb']|length != 0 and pg_stat_statement_enabled and pg_store_plans_enabled and pg_hint_plan_enabled %}
+shared_preload_libraries = 'pg_statsinfo,pg_stat_statements,pg_store_plans,pg_hint_plan'
+{% elif groups['postgresql_with_pg_statsinfo_repodb']|length != 0 and pg_stat_statement_enabled and pg_store_plans_enabled %}
 shared_preload_libraries = 'pg_statsinfo,pg_stat_statements,pg_store_plans'
+{% elif groups['postgresql_with_pg_statsinfo_repodb']|length != 0 and pg_stat_statement_enabled and pg_hint_plan_enabled %}
+shared_preload_libraries = 'pg_statsinfo,pg_stat_statements,pg_hint_plan'
+{% elif groups['postgresql_with_pg_statsinfo_repodb']|length != 0 and pg_store_plans_enabled and pg_hint_plan_enabled %}
+shared_preload_libraries = 'pg_statsinfo,pg_store_plans,pg_hint_plan'
 {% elif groups['postgresql_with_pg_statsinfo_repodb']|length != 0 and pg_stat_statement_enabled %}
 shared_preload_libraries = 'pg_statsinfo,pg_stat_statements'
 {% elif groups['postgresql_with_pg_statsinfo_repodb']|length != 0 and pg_store_plans_enabled %}
 shared_preload_libraries = 'pg_statsinfo,pg_store_plans'
+{% elif groups['postgresql_with_pg_statsinfo_repodb']|length != 0 and pg_hint_plan_enabled %}
+shared_preload_libraries = 'pg_statsinfo,pg_hint_plan'
 {% elif groups['postgresql_with_pg_statsinfo_repodb']|length != 0 %}
 shared_preload_libraries = 'pg_statsinfo'
 {% elif pg_stat_statement_enabled and pg_store_plans_enabled %}
@@ -165,6 +173,8 @@ shared_preload_libraries = 'pg_stat_statements,pg_store_plans'
 shared_preload_libraries = 'pg_stat_statements'
 {% elif pg_store_plans_enabled %}
 shared_preload_libraries = 'pg_store_plans'
+{% elif pg_hint__plan_enabled %}
+shared_preload_libraries = 'pg_hint_plan'
 {% endif %}
 
 # - Cost-Based Vacuum Delay -

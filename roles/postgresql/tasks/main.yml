@@ -44,6 +44,20 @@
   delay: 5
   when: pg_store_plans_enabled
 
+- name: register pg_hint_plan url
+  include: pg_hint_plan_url.yml
+  when: pg_hint_plan_enabled
+
+- name: pg_hint_plan install
+  yum:
+    name: "{{ pg_hint_plan_url }}"
+    state: present
+  register: result
+  until: result | success
+  retries: 3
+  delay: 5
+  when: pg_hint_plan_enabled
+
 - block:
   - name: (rhel) epel install
     yum:
