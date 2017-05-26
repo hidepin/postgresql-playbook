@@ -35,5 +35,5 @@
     "{{ pg_store_plans_version }}" == "1.1-1" and
     "{{ ansible_distribution_major_version }}" == "7"
 
-- name: pg_store_plans_
+- name: pg_store_plans_url
   set_fact: pg_store_plans_url="https://ja.osdn.net/frs/redir.php?m=jaist&f=%2Fpgstoreplans%2F{{ pg_store_plans_tag }}%2Fpg_store_plans{{ pgdg_version|regex_replace('-.*', '')|regex_replace('\\.', '') }}-{{ pg_store_plans_version }}.el{{ ansible_distribution_major_version }}.x86_64.rpm"
