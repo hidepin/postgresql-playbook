@@ -11,6 +11,7 @@ install_directory = /var/www
 log_page_size = 1000
 
 {% for host in groups.postgresql_with_pg_statsinfo_repodb %}
+{% if hostvars[host].pg_stats_reporter_server is undefined or hostvars[host].pg_stats_reporter_server == inventory_hostname %}
 
 ;-------------------------------------
 ; repository DB setting section
@@ -112,4 +113,5 @@ runtime_params = true               ; Run-time parameters
 
 ; -- Profiles --
 profiles = false                    ; Profiles
+{% endif %}
 {% endfor %}
