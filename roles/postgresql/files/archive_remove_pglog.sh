@@ -9,7 +9,7 @@ archive_directory="${log_directory}/log_archive"
 archive_filename="${archive_directory}/$(date +postgresql-%Y%m%d.tar.gz)"
 
 # check expired_date
-[ ${expired_date} -ge 1 q] || exit 1
+[ ${expired_date} -ge 1 ] || exit 1
 
 # change the current directory to log directory
 cd "${log_directory}" || exit 1
