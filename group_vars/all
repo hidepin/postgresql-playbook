@@ -40,7 +40,6 @@ pg_log_autovacuum_min_duration: 0
 pg_pg_statsinfo_snapshot_interval: 10 # min
 pg_pg_statsinfo_maintenance_time: "00:02:00"
 pg_pg_statsinfo_repository_keepday: 31
-pg_pg_statsinfo_repolog_keepday: 31
 pg_pg_statsinfo_log_expired_date: 31 # original parameter
 
 ############################################################
