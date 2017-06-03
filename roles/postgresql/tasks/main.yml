@@ -223,10 +223,10 @@
   when: "'postgresql_with_pg_statsinfo_repodb' in group_names"
 
 - block:
-  - name: archive_remove_pglog.sh
-    copy:
-      src: archive_remove_pglog.sh
-      dest: /usr/pgsql-{{ pgdg_version|regex_replace('-.*', '') }}/bin/archive_remove_pglog.sh
+  - name: add archive_remove_pglog.sh
+    template:
+      src: archive_remove_pglog.sh.j2
+      dest: "/usr/pgsql-{{ pgdg_version|regex_replace('-.*', '') }}/bin/archive_remove_pglog.sh"
       owner: root
       group: root
       mode: 0755

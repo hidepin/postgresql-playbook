@@ -58,6 +58,7 @@ pg_pg_stat_statements_max: 5000
 # pg_store_plans
 pg_pg_store_plans_max: 5000
 # pg_statsinfo
+pg_pg_statsinfo_textlog_filename: "pg_statsinfo.log"
 pg_pg_statsinfo_stat_statements_max: 5000
 pg_pg_statsinfo_snapshot_interval: 10 # min
 pg_pg_statsinfo_enable_maintenance: "on"
@@ -65,8 +66,9 @@ pg_pg_statsinfo_maintenance_time: "00:02:00"
 pg_pg_statsinfo_repository_keepday: 31
 pg_pg_statsinfo_repolog_keepday: 31
 pg_pg_statsinfo_repolog_min_messages: "disable"
+pg_pg_statsinfo_log_archive_date: 7 # original parameter
 pg_pg_statsinfo_log_expired_date: 31 # original parameter
-pg_pg_statsinfo_log_maintenance_command: "/usr/pgsql-{{ pgdg_version|regex_replace('-.*', '') }}/bin/archive_pglog.sh %l {{pg_pg_statsinfo_log_expired_date }}"
+pg_pg_statsinfo_log_maintenance_command: "/usr/pgsql-{{ pgdg_version|regex_replace('-.*', '') }}/bin/archive_pglog.sh %l {{ pg_pg_statsinfo_log_archive_date }} {{pg_pg_statsinfo_log_expired_date }}"
 # pg_hint_plan
 pg_pg_hint_plan_enable_hint: "on"
 pg_pg_hint_plan_enable_hint_table: "off"
