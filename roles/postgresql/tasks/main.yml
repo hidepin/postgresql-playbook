@@ -196,7 +196,7 @@
 
 - name: postgresql start
   service:
-    name: "postgresql-{{ pgdg_version|regex_replace('-.*', '') }}"
+    name: "postgresql-{{ pgdg_version|regex_replace('-.*', '') }}.service"
     state: started
     enabled: yes
     daemon_reload: yes
