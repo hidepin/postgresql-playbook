@@ -7,7 +7,7 @@ log_directory="${1}"
 archive_date="${2:-7}"
 expired_date="${3:--1}"
 archive_directory="${log_directory}/log_archive"
-archive_filename="${archive_directory}/$(date -d \'${archive_date} days ago\' +postgresql-%Y%m%d.tar.gz)"
+archive_filename="${archive_directory}/`date -d \"${archive_date} days ago\" \"+postgresql-%Y%m%d.tar.gz\"`"
 
 # check archive_date
 [ ${archive_date} -ge 0 ] || exit 1
