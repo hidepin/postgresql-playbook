@@ -64,7 +64,7 @@ tuned_profile_parameter:
       - { option: 'transparent_hugepages', value: 'never' }
   - section: 'disk'
     parameter:
-      - { option: 'elevator', value: 'dealine' }
+      - { option: 'elevator', value: 'deadline' }
       - { option: 'readahead', value: '128' }
   - section: 'sysctl'
     parameter:
