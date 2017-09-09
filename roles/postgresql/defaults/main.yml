@@ -5,7 +5,7 @@ proxy_env:
 #  http_proxy: http://172.16.111.1:8080
 #  https_proxy: http://172.16.111.1:8080
 postgresql_top_dir: "/opt/pg"
-pgdg_version: "9.6-5"
+pgdg_version: "9.6-3"
 epel_version: "7-10"
 pg_statsinfo_version: "3.2.3-1"
 pg_store_plans_version: "1.1-1"
