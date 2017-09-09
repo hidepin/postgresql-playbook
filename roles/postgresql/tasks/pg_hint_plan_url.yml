@@ -6,111 +6,118 @@
 - name: pg_hint_plan_tag postgresql9.1 and pg_hint_plan1.0.2-1
   set_fact: pg_hint_plan_tag="62423"
   when: >
-    "{{ pgdg_version|regex_replace('-.*', '') }}" == "9.1" and
-    "{{ pg_hint_plan_version }}" == "1.0.2-1" and
-    "{{ ansible_distribution_major_version }}" == "6"
+    ( pgdg_version|regex_replace('-.*', '') ) == "9.1" and
+    ( pg_hint_plan_version ) == "1.0.2-1" and
+    ( ansible_distribution_major_version ) == "6"
 
 - name: pg_hint_plan_tag postgresql9.1 and pg_hint_plan1.1.1-1
   set_fact: pg_hint_plan_tag="62168"
   when: >
-    "{{ pgdg_version|regex_replace('-.*', '') }}" == "9.1" and
-    "{{ pg_hint_plan_version }}" == "1.1.1-1" and
-    "{{ ansible_distribution_major_version }}" == "6"
+    ( pgdg_version|regex_replace('-.*', '') ) == "9.1" and
+    ( pg_hint_plan_version ) == "1.1.1-1" and
+    ( ansible_distribution_major_version ) == "6"
 
 - name: pg_hint_plan_tag postgresql9.2 and pg_hint_plan1.1.1-1
   set_fact: pg_hint_plan_tag="62167"
   when: >
-    "{{ pgdg_version|regex_replace('-.*', '') }}" == "9.2" and
-    "{{ pg_hint_plan_version }}" == "1.1.1-1" and
-    "{{ ansible_distribution_major_version }}" == "6"
+    ( pgdg_version|regex_replace('-.*', '') ) == "9.2" and
+    ( pg_hint_plan_version ) == "1.1.1-1" and
+    ( ansible_distribution_major_version ) == "6"
 
 - name: pg_hint_plan_tag postgresql9.2 and pg_hint_plan1.1.2-1
   set_fact: pg_hint_plan_tag="62424"
   when: >
-    "{{ pgdg_version|regex_replace('-.*', '') }}" == "9.2" and
-    "{{ pg_hint_plan_version }}" == "1.1.2-1" and
-    "{{ ansible_distribution_major_version }}" == "6"
+    ( pgdg_version|regex_replace('-.*', '') ) == "9.2" and
+    ( pg_hint_plan_version ) == "1.1.2-1" and
+    ( ansible_distribution_major_version ) == "6"
 
 - name: pg_hint_plan_tag postgresql9.2 and pg_hint_plan1.1.3-1
   set_fact: pg_hint_plan_tag="62454"
   when: >
-    "{{ pgdg_version|regex_replace('-.*', '') }}" == "9.2" and
-    "{{ pg_hint_plan_version }}" == "1.1.3-1" and
-    "{{ ansible_distribution_major_version }}" == "6"
+    ( pgdg_version|regex_replace('-.*', '') ) == "9.2" and
+    ( pg_hint_plan_version ) == "1.1.3-1" and
+    ( ansible_distribution_major_version ) == "6"
 
 - name: pg_hint_plan_tag postgresql9.3 and pg_hint_plan1.1.2-1
   set_fact: pg_hint_plan_tag="62425"
   when: >
-    "{{ pgdg_version|regex_replace('-.*', '') }}" == "9.3" and
-    "{{ pg_hint_plan_version }}" == "1.1.2-1" and
-    "{{ ansible_distribution_major_version }}" == "6"
+    ( pgdg_version|regex_replace('-.*', '') ) == "9.3" and
+    ( pg_hint_plan_version ) == "1.1.2-1" and
+    ( ansible_distribution_major_version ) == "6"
 
 - name: pg_hint_plan_tag postgresql9.3 and pg_hint_plan1.1.3-1
   set_fact: pg_hint_plan_tag="62455"
   when: >
-    "{{ pgdg_version|regex_replace('-.*', '') }}" == "9.3" and
-    "{{ pg_hint_plan_version }}" == "1.1.3-1" and
-    "{{ ansible_distribution_major_version }}" == "6"
+    ( pgdg_version|regex_replace('-.*', '') ) == "9.3" and
+    ( pg_hint_plan_version ) == "1.1.3-1" and
+    ( ansible_distribution_major_version ) == "6"
 
 - name: pg_hint_plan_tag postgresql9.3 and pg_hint_plan1.1.4-1
   set_fact: pg_hint_plan_tag="67705"
   when: >
-    "{{ pgdg_version|regex_replace('-.*', '') }}" == "9.3" and
-    "{{ pg_hint_plan_version }}" == "1.1.4-1"
+    ( pgdg_version|regex_replace('-.*', '') ) == "9.3" and
+    ( pg_hint_plan_version ) == "1.1.4-1"
 
 - name: pg_hint_plan_tag postgresql9.4 and pg_hint_plan1.1.2-1
   set_fact: pg_hint_plan_tag="62450"
   when: >
-    "{{ pgdg_version|regex_replace('-.*', '') }}" == "9.4" and
-    "{{ pg_hint_plan_version }}" == "1.1.2-1" and
-    "{{ ansible_distribution_major_version }}" == "6"
+    ( pgdg_version|regex_replace('-.*', '') ) == "9.4" and
+    ( pg_hint_plan_version ) == "1.1.2-1" and
+    ( ansible_distribution_major_version ) == "6"
 
 - name: pg_hint_plan_tag postgresql9.4 and pg_hint_plan1.1.3-1
   set_fact: pg_hint_plan_tag="62456"
   when: >
-    "{{ pgdg_version|regex_replace('-.*', '') }}" == "9.4" and
-    "{{ pg_hint_plan_version }}" == "1.1.3-1"
+    ( pgdg_version|regex_replace('-.*', '') ) == "9.4" and
+    ( pg_hint_plan_version ) == "1.1.3-1"
 
 - name: pg_hint_plan_tag postgresql9.4 and pg_hint_plan1.1.4-1
   set_fact: pg_hint_plan_tag="67708"
   when: >
-    "{{ pgdg_version|regex_replace('-.*', '') }}" == "9.4" and
-    "{{ pg_hint_plan_version }}" == "1.1.4-1"
+    ( pgdg_version|regex_replace('-.*', '') ) == "9.4" and
+    ( pg_hint_plan_version ) == "1.1.4-1"
 
 - name: pg_hint_plan_tag postgresql9.5 and pg_hint_plan1.1.3-1
   set_fact: pg_hint_plan_tag="64929"
   when: >
-    "{{ pgdg_version|regex_replace('-.*', '') }}" == "9.5" and
-    "{{ pg_hint_plan_version }}" == "1.1.3-1" and
-    "{{ ansible_distribution_major_version }}" == "7"
+    ( pgdg_version|regex_replace('-.*', '') ) == "9.5" and
+    ( pg_hint_plan_version ) == "1.1.3-1" and
+    ( ansible_distribution_major_version ) == "7"
 
 - name: pg_hint_plan_tag postgresql9.5 and pg_hint_plan1.1.4-1
   set_fact: pg_hint_plan_tag="67707"
   when: >
-    "{{ pgdg_version|regex_replace('-.*', '') }}" == "9.5" and
-    "{{ pg_hint_plan_version }}" == "1.1.4-1" and
-    "{{ ansible_distribution_major_version }}" == "7"
+    ( pgdg_version|regex_replace('-.*', '') ) == "9.5" and
+    ( pg_hint_plan_version ) == "1.1.4-1" and
+    ( ansible_distribution_major_version ) == "7"
 
 - name: pg_hint_plan_tag postgresql9.6 and pg_hint_plan1.1.3-1
   set_fact: pg_hint_plan_tag="66639"
   when: >
-    "{{ pgdg_version|regex_replace('-.*', '') }}" == "9.6" and
-    "{{ pg_hint_plan_version }}" == "1.1.3-1" and
-    "{{ ansible_distribution_major_version }}" == "7"
+    ( pgdg_version|regex_replace('-.*', '') ) == "9.6" and
+    ( pg_hint_plan_version ) == "1.1.3-1" and
+    ( ansible_distribution_major_version ) == "7"
 
 - name: pg_hint_plan_tag postgresql9.6 and pg_hint_plan1.2.0-1
   set_fact: pg_hint_plan_tag="67138"
   when: >
-    "{{ pgdg_version|regex_replace('-.*', '') }}" == "9.6" and
-    "{{ pg_hint_plan_version }}" == "1.2.0-1" and
-    "{{ ansible_distribution_major_version }}" == "7"
+    ( pgdg_version|regex_replace('-.*', '') ) == "9.6" and
+    ( pg_hint_plan_version ) == "1.2.0-1" and
+    ( ansible_distribution_major_version ) == "7"
 
 - name: pg_hint_plan_tag postgresql9.6 and pg_hint_plan1.2.1-1
   set_fact: pg_hint_plan_tag="67706"
   when: >
-    "{{ pgdg_version|regex_replace('-.*', '') }}" == "9.6" and
-    "{{ pg_hint_plan_version }}" == "1.2.1-1" and
-    "{{ ansible_distribution_major_version }}" == "7"
+    ( pgdg_version|regex_replace('-.*', '') ) == "9.6" and
+    ( pg_hint_plan_version ) == "1.2.1-1" and
+    ( ansible_distribution_major_version ) == "7"
+
+- name: pg_hint_plan_tag postgresql9.6 and pg_hint_plan1.2.2-1
+  set_fact: pg_hint_plan_tag="68087"
+  when: >
+    ( pgdg_version|regex_replace('-.*', '') ) == "9.6" and
+    ( pg_hint_plan_version ) == "1.2.2-1" and
+    ( ansible_distribution_major_version ) == "7"
 
 - name: pg_hint_plan_url
   set_fact: pg_hint_plan_url="https://ja.osdn.net/frs/redir.php?m=jaist&f=%2Fpghintplan%2F{{ pg_hint_plan_tag }}%2Fpg_hint_plan{{ pgdg_version|regex_replace('-.*', '')|regex_replace('\\.', '') }}-{{ pg_hint_plan_version }}.el{{ ansible_distribution_major_version }}.x86_64.rpm"

@@ -28,7 +28,7 @@
   until: result | success
   retries: 3
   delay: 5
-  when: "{{ groups['postgresql_with_pg_statsinfo_repodb']|length }} != 0"
+  when: ( groups['postgresql_with_pg_statsinfo_repodb']|length ) != 0
 
 - name: register pg_store_plans url
   include: pg_store_plans_url.yml
@@ -241,7 +241,7 @@
     loop_control:
       loop_var: backup_item
 
-  when: "{{ groups['postgresql_with_pg_statsinfo_repodb']|length }} != 0"
+  when: ( groups['postgresql_with_pg_statsinfo_repodb']|length ) != 0
 
 - block:
   - name: pg_stat_statement enabled check
@@ -275,4 +275,4 @@
     command: "/usr/pgsql-{{ pgdg_version|regex_replace('-.*', '') }}/bin/psql -U postgres -d postgres -c \"CREATE EXTENSION pg_store_plans\""
     when: pg_store_plans_enabled.stdout == ''
 
-  when: "{{ groups['postgresql_with_pg_statsinfo_repodb']|length }} != 0"
+  when: ( groups['postgresql_with_pg_statsinfo_repodb']|length ) != 0
