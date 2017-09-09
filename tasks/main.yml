@@ -7,6 +7,10 @@
   package:
     name: "{{ item }}"
     state: present
+  register: result
+  until: result | success
+  retries: 3
+  delay: 5
   with_items:
     - openssh-clients
     - libselinux-python
@@ -77,6 +81,10 @@
   package:
     name: "{{ item }}"
     state: latest
+  register: result
+  until: result | success
+  retries: 3
+  delay: 5
   with_items: "{{ update_pkg }}"
 
 - name: Add common group

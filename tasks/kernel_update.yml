@@ -18,6 +18,10 @@
     package:
       name: "{{ item }}"
       state: latest
+    register: result
+    until: result | success
+    retries: 3
+    delay: 5
     when: check_kernel_update_version.rc != 0
     with_items:
       - kernel-tools-libs
@@ -38,6 +42,10 @@
     package:
       name: "{{ item }}"
       state: latest
+    register: result
+    until: result | success
+    retries: 3
+    delay: 5
     when: check_kernel_update_version.rc != 0
     with_items:
       - kernel
@@ -47,6 +55,10 @@
     package:
       name: "{{ item }}"
       state: latest
+    register: result
+    until: result | success
+    retries: 3
+    delay: 5
     when: check_kernel_update_version.rc != 0
     with_items:
       - kernel-tools-libs

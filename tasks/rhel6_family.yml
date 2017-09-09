@@ -55,6 +55,10 @@
   yum:
     name: ntp
     state: present
+  register: result
+  until: result | success
+  retries: 3
+  delay: 5
   when: ntp_server is defined
 
 - name: (rhel6 family) ntp step-tickers settings
