@@ -40,6 +40,10 @@
     package:
       name: chrony
       state: present
+    register: result
+    until: result | success
+    retries: 3
+    delay: 5
     when: ntp_server is defined
 
   - name: (rhel7 family) chrony.conf settings
@@ -180,6 +184,10 @@
     package:
       name: tuned
       state: present
+    register: result
+    until: result | success
+    retries: 3
+    delay: 5
     when: ansible_distribution == "Fedora"
 
   - name: (rhel7 family) create tuned profile dir
@@ -213,8 +221,13 @@
 
   - name: (rhel7 family) set active tuned profile
     shell: tuned-adm profile "{{ tuned_profile }}"
-    when: active_tuned_profile.stdout != "{{ tuned_profile }}"
+    when: active_tuned_profile.stdout != tuned_profile
 
+  - name: (rhel7 family) tuned restart
+    service:
+      name: tuned.service
+      state: restarted
+    when: is_tuned_profile_setting|changed
 
   - name: (rhel7 family) tuned restart
     service:
