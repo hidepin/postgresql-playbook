@@ -248,6 +248,7 @@ checkpoint_completion_target = {{ pg_checkpoint_completion_target }}
 
 #archive_mode = off		# enables archiving; off, on, or always
 				# (change requires restart)
+archive_mode = {{ pg_archive_mode }}
 #archive_command = ''		# command to use to archive a logfile segment
 				# placeholders: %p = path of file to archive
 				#               %f = file name only
