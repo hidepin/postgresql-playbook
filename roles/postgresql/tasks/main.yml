@@ -90,20 +90,17 @@
 
   when: postgis2_enabled
 
-- name: create postgresql dir
-  file:
-    path: "{{item.path}}"
-    owner: "{{item.owner}}"
-    group: "{{item.group}}"
-    mode: "{{item.mode}}"
-    state: directory
+- name: setup pg partition
+  include: pg_partition.yml
   with_items:
-    - { path: "{{ postgresql_top_dir }}", owner: 'postgres', group: 'postgres', mode: '0700' }
-    - { path: "{{ postgresql_top_dir }}/pgdata", owner: 'postgres', group: 'postgres', mode: '0700' }
-    - { path: "{{ postgresql_top_dir }}/pgxlog", owner: 'postgres', group: 'postgres', mode: '0700' }
-    - { path: "{{ postgresql_top_dir }}/pgarch", owner: 'postgres', group: 'postgres', mode: '0700' }
-    - { path: "{{ postgresql_top_dir }}/pgarch/arc1", owner: 'postgres', group: 'postgres', mode: '0700' }
-    - { path: "/var/log/postgresql", owner: 'postgres', group: 'postgres', mode: '0755' }
+    - { disk: "{{ pg_top_disk }}", path: "{{ postgresql_top_dir }}", owner: 'postgres', group: 'postgres', mode: '0700' }
+    - { disk: "{{ pg_pgdata_disk }}", path: "{{ postgresql_top_dir }}/pgdata", owner: 'postgres', group: 'postgres', mode: '0700' }
+    - { disk: "{{ pg_pgxlog_disk }}", path: "{{ postgresql_top_dir }}/pgxlog", owner: 'postgres', group: 'postgres', mode: '0700' }
+    - { disk: "{{ pg_pgarch_disk }}", path: "{{ postgresql_top_dir }}/pgarch", owner: 'postgres', group: 'postgres', mode: '0700' }
+    - { disk: "{{ pg_arc1_disk }}", path: "{{ postgresql_top_dir }}/pgarch/arc1", owner: 'postgres', group: 'postgres', mode: '0700' }
+    - { disk: "{{ pg_log_disk }}", path: "/var/log/postgresql", owner: 'postgres', group: 'postgres', mode: '0755' }
+  loop_control:
+    loop_var: partition_item
 
 - name: postgresql initdb
   command: su - postgres -c "/usr/pgsql-{{ pgdg_version|regex_replace('-.*', '') }}/bin/initdb -D {{ postgresql_top_dir }}/pgdata/data -X {{ postgresql_top_dir }}/pgxlog/pg_xlog --encoding=UTF-8 --no-locale"

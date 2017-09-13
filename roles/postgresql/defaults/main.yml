@@ -22,6 +22,12 @@ pg_store_plans_enabled: True
 pg_hint_plan_enabled: True
 pg_statsinfo_user: "statsinfo"
 pg_statsinfo_database: "stats"
+pg_top_disk: ""
+pg_pgdata_disk: ""
+pg_pgxlog_disk: ""
+pg_pgarch_disk: ""
+pg_arc1_disk: ""
+pg_log_disk: ""
 
 ############################################################
 # postgresq.conf parameter
