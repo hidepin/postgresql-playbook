@@ -702,6 +702,7 @@ default_text_search_config = 'pg_catalog.english'
 pg_stat_statements.max = {{ pg_pg_stat_statements_max }}
 # pg_store_plans
 pg_store_plans.max = {{ pg_pg_store_plans_max }}
+{% if groups['postgresql_with_pg_statsinfo_repodb']|length != 0 %}
 # pg_statsinfo
 pg_statsinfo.textlog_filename = '{{ pg_pg_statsinfo_textlog_filename }}'
 pg_statsinfo.stat_statements_max = {{ pg_pg_statsinfo_stat_statements_max }}
@@ -720,6 +721,7 @@ pg_statsinfo.repository_keepday = {{ pg_pg_statsinfo_repository_keepday }}
 pg_statsinfo.repolog_keepday = {{ pg_pg_statsinfo_repolog_keepday }}
 pg_statsinfo.repolog_min_messages = {{ pg_pg_statsinfo_repolog_min_messages }}
 pg_statsinfo.log_maintenance_command = '{{ pg_pg_statsinfo_log_maintenance_command }}'
+{% endif %}
 # pg_hint_plan
 pg_hint_plan.enable_hint = {{ pg_pg_hint_plan_enable_hint }}
 pg_hint_plan.enable_hint_table = {{ pg_pg_hint_plan_enable_hint_table }}
