@@ -120,9 +120,6 @@ tcp_keepalives_count = {{ pg_tcp_keepalives_count }}
 shared_buffers = {{ pg_shared_buffers }}MB
 #huge_pages = try			# on, off, or try
 					# (change requires restart)
-{% if vm_nr_hugepages.stdout|int != 0 %}
-huge_pages = on
-{% endif %}
 #temp_buffers = 8MB			# min 800kB
 #max_prepared_transactions = 0		# zero disables the feature
 					# (change requires restart)
