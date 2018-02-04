@@ -4,6 +4,7 @@
 rhel_subscription:
   username: 'username'
   password: 'password'
+rhel_subscription_enabled: True
 pgdg_version: "9.6-3"
 epel_version: "7-10"
 pg_statsinfo_version: "3.2.3-1"
