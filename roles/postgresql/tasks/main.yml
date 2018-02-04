@@ -31,7 +31,7 @@
   when: ( groups['postgresql_with_pg_statsinfo_repodb']|length ) != 0
 
 - name: register pg_store_plans url
-  include: pg_store_plans_url.yml
+  import_tasks: pg_store_plans_url.yml
   when: pg_store_plans_enabled
 
 - name: pg_store_plans install
@@ -45,7 +45,7 @@
   when: pg_store_plans_enabled
 
 - name: register pg_hint_plan url
-  include: pg_hint_plan_url.yml
+  import_tasks: pg_hint_plan_url.yml
   when: pg_hint_plan_enabled
 
 - name: pg_hint_plan install
@@ -91,7 +91,7 @@
   when: postgis2_enabled
 
 - name: setup pg partition
-  include: pg_partition.yml
+  include_tasks: pg_partition.yml
   with_items:
     - { disk: "{{ pg_top_disk }}", path: "{{ postgresql_top_dir }}", owner: 'postgres', group: 'postgres', mode: '0700' }
     - { disk: "{{ pg_pgdata_disk }}", path: "{{ postgresql_top_dir }}/pgdata", owner: 'postgres', group: 'postgres', mode: '0700' }
@@ -181,7 +181,7 @@
 
   always:
   - name: postgresql backup settings
-    include: backup.yml
+    include_tasks: backup.yml
     with_flattened:
       - "{{ is_dot_bash_profile_setting|default() }}"
       - "{{ is_etc_sysconfig_pgsql_postgresql_setting|default() }}"
@@ -232,7 +232,7 @@
 
   always:
   - name: pg_statsinfo backup settings
-    include: backup.yml
+    include_tasks: backup.yml
     with_flattened:
       - "{{ is_archive_remove_pglog_setting|default() }}"
     loop_control:
