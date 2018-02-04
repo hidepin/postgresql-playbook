@@ -11,6 +11,7 @@
   - name: input rhel_subscription password
     pause:
       prompt: "input rhel subscription password"
+      private: yes
     run_once: true
     register: rhel_subscription_password
     when: rhel_subscription.password is undefined
@@ -33,6 +34,7 @@
     changed_when: false
 
   when: >
+    rhel_subscription_enabled and
     ansible_distribution == "RedHat" and
     rhel_subscription is defined
 
@@ -48,7 +50,7 @@
     register: is_yum_proxy_setting
     when: >
       ansible_os_family == "RedHat" and
-      not ansible_distribution == "Fedora"
+      ansible_distribution != "Fedora"
 
   - name: dnf proxy settings
     template:
@@ -63,7 +65,7 @@
 
   always:
   - name: common backup settings
-    include: backup.yml
+    include_tasks: backup.yml
     with_flattened:
       - "{{ is_yum_proxy_setting|default() }}"
     loop_control:
