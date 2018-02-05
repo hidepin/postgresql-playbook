@@ -9,29 +9,12 @@
     state: directory
 
 - block:
-  ### Begin Ansible 2.3 bug fix
-  - name: "disk label check [{{ partition_item.path }}]"
-    shell: "parted -s -m {{ partition_item.disk }} print | sed -n 2p | awk -F: '{print $6}'"
-    register: disk_label_check
-    changed_when: false
-
-  - name: "mklabel [{{ partition_item.path }}]"
-    parted:
-      device: "{{ partition_item.disk }}"
-      label: gpt
-      state: present
-    environment:
-      LANG: en_US.UTF-8
-    when: disk_label_check.stdout != 'gpt'
-
   - name: "parted device [{{ partition_item.path }}]"
     parted:
       device: "{{ partition_item.disk }}"
+      label: gpt
       number: 1
       state: present
-    environment:
-      LANG: en_US.UTF-8
-  ### End Ansible 2.3 bug fix
 
   - name: "create fs [{{ partition_item.path }}]"
     filesystem:
