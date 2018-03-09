@@ -4,7 +4,9 @@ include = {{ tuned_adm_recommend.stdout }}
 {% for section in tuned_profile_parameter %}
 [{{ section.section }}]
 {% for item in section.parameter %}
+{% if item.value %}
 {{ item.option }} = {{ item.value }}
+{% endif %}
 {% endfor %}
 
 {% endfor %}
