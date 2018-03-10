@@ -1,12 +1,19 @@
 [main]
 include = {{ tuned_adm_recommend.stdout }}
-
 {% for section in tuned_profile_parameter %}
+{% set parameter_value = namespace(exist = False) %}
+{%- for parameter in section.parameter %}
+{%- if parameter.value %}
+{%- set parameter_value.exist = True %}
+{%- endif %}
+{%- endfor %}
+{% if parameter_value.exist %}
+
 [{{ section.section }}]
-{% for item in section.parameter %}
-{% if item.value %}
-{{ item.option }} = {{ item.value }}
+{% for parameter in section.parameter %}
+{% if parameter.value %}
+{{ parameter.option }} = {{ parameter.value }}
 {% endif %}
 {% endfor %}
-
+{% endif %}
 {% endfor %}
