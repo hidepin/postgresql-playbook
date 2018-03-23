@@ -5,11 +5,11 @@ GRUB_DISABLE_SUBMENU=true
 GRUB_TERMINAL_OUTPUT="console"
 GRUB_CMDLINE_LINUX="crashkernel={{ (ansible_distribution == "Fedora")|ternary("128M", "auto") }} rhgb quiet ipv6.disable=1"
 GRUB_DISABLE_RECOVERY="true"
-{% set tuned_params = namespace(enabled = False) %}
+{% set tuned_params = {'enabled': False} %}
 {%- for section in tuned_profile_parameter %}
 {%- for parameter in section.parameter %}
 {%- if section.section == 'bootloader' and parameter.option == 'cmdline' and parameter.value %}
-{%- set tuned_params.enabled = True %}
+{%- if tuned_params.update({'enabled': True}) %}{% endif %}
 {%- endif %}
 {%- endfor %}
 {%- endfor %}

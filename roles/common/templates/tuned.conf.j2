@@ -1,10 +1,10 @@
 [main]
 include = {{ tuned_adm_recommend.stdout }}
 {% for section in tuned_profile_parameter %}
-{% set parameter_value = namespace(exist = False) %}
+{% set parameter_value = {'exist': False} %}
 {%- for parameter in section.parameter %}
 {%- if parameter.value %}
-{%- set parameter_value.exist = True %}
+{%- if parameter_value.update({'exist': True}) %}{% endif %}
 {%- endif %}
 {%- endfor %}
 {% if parameter_value.exist %}
