@@ -120,5 +120,6 @@
 - name: reboot after change selinux
   import_tasks: reboot.yml
   when: >
-    ansible_selinux.status is undefined or
-    ansible_selinux.status != "disabled"
+    reboot_enabled and
+    ( ansible_selinux.status is undefined or
+    ansible_selinux.status != "disabled" )
