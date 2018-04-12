@@ -151,7 +151,9 @@
       owner: root
       group: root
       mode: 0755
-    when: kdump_partition_uuid.stdout is defined
+    when: >
+      kdump_enabled and
+      kdump_partition_uuid.stdout is defined
 
   - name: (rhel7 family) kdump.conf settings
     template:
@@ -162,14 +164,18 @@
       mode: 0644
       backup: yes
     register: is_kdump_setting
-    when: kdump_partition_uuid.stdout is defined
+    when: >
+      kdump_enabled and
+      kdump_partition_uuid.stdout is defined
     notify: kdump restart
 
   - name: (rhel7 family) enable kdump services
     service:
       name: kdump.service
       enabled: yes
-    when: kdump_partition_uuid.stdout is defined
+    when: >
+      kdump_enabled and
+      kdump_partition_uuid.stdout is defined
 
   - name: (rhel7 family) ulimits settings
     template:
@@ -252,5 +258,6 @@
 - name: reboot after kdump setting
   import_tasks: reboot.yml
   when: >
-    runlevel.stdout != "multi-user.target" or
-    is_grub_setting|changed
+    reboot_enabled and
+    ( runlevel.stdout != "multi-user.target" or
+    is_grub_setting|changed)
