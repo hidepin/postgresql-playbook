@@ -132,6 +132,9 @@
       mode: 0644
       backup: yes
     register: is_grub_setting
+    when: >
+      kdump_enabled or
+      not ipv6_enabled
 
   - name: grub reconfig
     command: grub2-mkconfig -o {{ (bios_mode.stdout == "UEFI")|ternary(grub_cfg_uefi, grub_cfg_legacy) }}

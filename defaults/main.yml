@@ -49,3 +49,4 @@ update_pkg:
 #  - systemd
 kdump_enabled: True
 reboot_enabled: True
+ipv6_enabled: False
