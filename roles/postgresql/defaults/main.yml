@@ -7,7 +7,7 @@ proxy_env:
 postgresql_top_dir: "/opt/pg"
 pgdg_version: "9.6-3"
 epel_version: "7-11"
-pg_statsinfo_version: "3.2.3-1"
+pg_statsinfo_version: "3.3.0-1"
 pg_store_plans_version: "1.1-1"
 pg_hint_plan_version: "1.2.2-1"
 postgresql_pkg:
