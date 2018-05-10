@@ -41,7 +41,7 @@
       name: chrony
       state: present
     register: result
-    until: result | success
+    until: result is success
     retries: 3
     delay: 5
     when: >
@@ -138,7 +138,7 @@
 
   - name: grub reconfig
     command: grub2-mkconfig -o {{ (bios_mode.stdout == "UEFI")|ternary(grub_cfg_uefi, grub_cfg_legacy) }}
-    when: is_grub_setting|changed
+    when: is_grub_setting is changed
 
   - name: (rhel7 family) check kdump partition
     shell: cat /etc/fstab | grep "{{ kdump_partition }}" | sed 's/^UUID=\([^ ]*\).*/\1/'
@@ -196,7 +196,7 @@
       name: tuned
       state: present
     register: result
-    until: result | success
+    until: result is success
     retries: 3
     delay: 5
     when: >
@@ -240,7 +240,7 @@
     service:
       name: tuned.service
       state: restarted
-    when: is_tuned_profile_setting|changed
+    when: is_tuned_profile_setting is changed
 
   always:
   - name: (rhel7 family) backup settings
@@ -263,4 +263,4 @@
   when: >
     reboot_enabled and
     ( runlevel.stdout != "multi-user.target" or
-    is_grub_setting|changed)
+    is_grub_setting is changed)

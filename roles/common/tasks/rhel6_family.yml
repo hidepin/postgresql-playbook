@@ -56,7 +56,7 @@
     name: ntp
     state: present
   register: result
-  until: result | success
+  until: result is success
   retries: 3
   delay: 5
   when: >

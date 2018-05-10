@@ -4,6 +4,7 @@
   - name: input rhel_subscription username
     pause:
       prompt: "input rhel subscription username"
+      echo: yes
     run_once: true
     register: rhel_subscription_username
     when: rhel_subscription.username is undefined
@@ -11,7 +12,7 @@
   - name: input rhel_subscription password
     pause:
       prompt: "input rhel subscription password"
-      private: yes
+      echo: no
     run_once: true
     register: rhel_subscription_password
     when: rhel_subscription.password is undefined
