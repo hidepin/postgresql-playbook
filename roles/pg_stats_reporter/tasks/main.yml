@@ -6,7 +6,7 @@
     state: present
     enablerepo: "rhel-{{ ansible_distribution_major_version }}-server-optional-rpms"
   register: result
-  until: result | success
+  until: result is success
   retries: 3
   delay: 5
   with_items:
@@ -22,7 +22,7 @@
     name: "{{ item }}"
     state: present
   register: result
-  until: result | success
+  until: result is success
   retries: 3
   delay: 5
   with_items:
@@ -38,7 +38,7 @@
     name: "https://downloads.sourceforge.net/project/pgstatsinfo/pg_stats_reporter/{{ pg_stats_reporter_version|regex_replace('-.*', '') }}/pg_stats_reporter-{{ pg_stats_reporter_version }}.el{{ ansible_distribution_major_version }}.noarch.rpm"
     state: present
   register: result
-  until: result | success
+  until: result is success
   retries: 3
   delay: 5
 
