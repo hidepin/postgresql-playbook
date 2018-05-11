@@ -5,7 +5,7 @@
     name: "https://download.postgresql.org/pub/repos/yum/{{ pgdg_version|regex_replace('-.*', '') }}/redhat/rhel-{{ ansible_distribution_major_version }}-x86_64/pgdg-{{ ansible_distribution|lower }}{{ pgdg_version|regex_replace('-.*', '')|regex_replace('\\.', '') }}-{{ pgdg_version }}.noarch.rpm"
     state: present
   register: result
-  until: result | success
+  until: result is success
   retries: 3
   delay: 5
 
@@ -16,7 +16,7 @@
   with_items:
     "{{ postgresql_pkg }}"
   register: result
-  until: result | success
+  until: result is success
   retries: 3
   delay: 5
 
@@ -25,7 +25,7 @@
     name: "https://downloads.sourceforge.net/project/pgstatsinfo/pg_statsinfo/{{ pg_statsinfo_version|regex_replace('-.*', '') }}/pg_statsinfo-{{ pg_statsinfo_version }}.pg{{ pgdg_version|regex_replace('-.*', '')|regex_replace('\\.', '') }}.rhel{{ ansible_distribution_major_version }}.x86_64.rpm"
     state: present
   register: result
-  until: result | success
+  until: result is success
   retries: 3
   delay: 5
   when: ( groups['postgresql_with_pg_statsinfo_repodb']|length ) != 0
@@ -39,7 +39,7 @@
     name: "{{ pg_store_plans_url }}"
     state: present
   register: result
-  until: result | success
+  until: result is success
   retries: 3
   delay: 5
   when: pg_store_plans_enabled
@@ -53,7 +53,7 @@
     name: "{{ pg_hint_plan_url }}"
     state: present
   register: result
-  until: result | success
+  until: result is success
   retries: 3
   delay: 5
   when: pg_hint_plan_enabled
@@ -64,7 +64,7 @@
       name: "https://dl.fedoraproject.org/pub/epel/{{ ansible_distribution_major_version }}/x86_64/Packages/{{ (ansible_distribution_major_version == '7')|ternary('e/','') }}epel-release-{{ epel_version }}.noarch.rpm"
       state: present
     register: result
-    until: result | success
+    until: result is success
     retries: 3
     delay: 5
     when: ansible_distribution == "RedHat"
@@ -74,7 +74,7 @@
       name: epel-release
       state: present
     register: result
-    until: result | success
+    until: result is success
     retries: 3
     delay: 5
     when: ansible_distribution == "CentOS"
@@ -84,7 +84,7 @@
       name: "postgis2_{{ pgdg_version|regex_replace('-.*', '')|regex_replace('\\.', '') }}"
       state: present
     register: result
-    until: result | success
+    until: result is success
     retries: 3
     delay: 5
 

@@ -7,6 +7,10 @@
     run_once: true
     when: backup_time is undefined
 
+  - name: undefined backup file
+    set_fact:
+      backup_file: ""
+
   - name: set backup file
     set_fact:
       backup_file: "{{ backup_item.backup_file }}"
@@ -31,7 +35,9 @@
     fetch:
       src: "{{ backup_file }}"
       dest: "backup/{{ backup_time }}"
-    when: backup_file is defined
+    when: >
+      backup_file is defined and
+      backup_file != ""
 
   - name: "{{ dest_file|default('no') }} backup after setting"
     fetch:
@@ -43,9 +49,11 @@
     file:
       path: "{{ backup_file }}"
       state: absent
-    when: backup_file is defined
+    when: >
+      backup_file is defined and
+      backup_file != ""
 
   when: >
     backup_item is defined and
     backup_item != "" and
-    backup_item|changed
+    backup_item is changed
