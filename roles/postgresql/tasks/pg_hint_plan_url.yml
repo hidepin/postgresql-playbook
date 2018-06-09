@@ -58,6 +58,20 @@
     ( pgdg_version|regex_replace('-.*', '') ) == "9.3" and
     ( pg_hint_plan_version ) == "1.1.4-1"
 
+- name: pg_hint_plan_tag postgresql9.3 and pg_hint_plan1.1.5-1
+  set_fact: pg_hint_plan_tag="68090"
+  when: >
+    ( pgdg_version|regex_replace('-.*', '') ) == "9.3" and
+    ( pg_hint_plan_version ) == "1.1.5-1" and
+    ( ansible_distribution_major_version ) == "7"
+
+- name: pg_hint_plan_tag postgresql9.3 and pg_hint_plan1.1.6-1
+  set_fact: pg_hint_plan_tag="69670"
+  when: >
+    ( pgdg_version|regex_replace('-.*', '') ) == "9.3" and
+    ( pg_hint_plan_version ) == "1.1.6-1" and
+    ( ansible_distribution_major_version ) == "7"
+
 - name: pg_hint_plan_tag postgresql9.4 and pg_hint_plan1.1.2-1
   set_fact: pg_hint_plan_tag="62450"
   when: >
@@ -77,6 +91,20 @@
     ( pgdg_version|regex_replace('-.*', '') ) == "9.4" and
     ( pg_hint_plan_version ) == "1.1.4-1"
 
+- name: pg_hint_plan_tag postgresql9.4 and pg_hint_plan1.1.5-1
+  set_fact: pg_hint_plan_tag="68089"
+  when: >
+    ( pgdg_version|regex_replace('-.*', '') ) == "9.4" and
+    ( pg_hint_plan_version ) == "1.1.5-1" and
+    ( ansible_distribution_major_version ) == "7"
+
+- name: pg_hint_plan_tag postgresql9.4 and pg_hint_plan1.1.6-1
+  set_fact: pg_hint_plan_tag="69669"
+  when: >
+    ( pgdg_version|regex_replace('-.*', '') ) == "9.4" and
+    ( pg_hint_plan_version ) == "1.1.6-1" and
+    ( ansible_distribution_major_version ) == "7"
+
 - name: pg_hint_plan_tag postgresql9.5 and pg_hint_plan1.1.3-1
   set_fact: pg_hint_plan_tag="64929"
   when: >
@@ -89,6 +117,20 @@
   when: >
     ( pgdg_version|regex_replace('-.*', '') ) == "9.5" and
     ( pg_hint_plan_version ) == "1.1.4-1" and
+    ( ansible_distribution_major_version ) == "7"
+
+- name: pg_hint_plan_tag postgresql9.5 and pg_hint_plan1.1.5-1
+  set_fact: pg_hint_plan_tag="68088"
+  when: >
+    ( pgdg_version|regex_replace('-.*', '') ) == "9.5" and
+    ( pg_hint_plan_version ) == "1.1.5-1" and
+    ( ansible_distribution_major_version ) == "7"
+
+- name: pg_hint_plan_tag postgresql9.5 and pg_hint_plan1.1.6-1
+  set_fact: pg_hint_plan_tag="69668"
+  when: >
+    ( pgdg_version|regex_replace('-.*', '') ) == "9.5" and
+    ( pg_hint_plan_version ) == "1.1.6-1" and
     ( ansible_distribution_major_version ) == "7"
 
 - name: pg_hint_plan_tag postgresql9.6 and pg_hint_plan1.1.3-1
@@ -117,6 +159,13 @@
   when: >
     ( pgdg_version|regex_replace('-.*', '') ) == "9.6" and
     ( pg_hint_plan_version ) == "1.2.2-1" and
+    ( ansible_distribution_major_version ) == "7"
+
+- name: pg_hint_plan_tag postgresql9.6 and pg_hint_plan1.2.3-1
+  set_fact: pg_hint_plan_tag="69667"
+  when: >
+    ( pgdg_version|regex_replace('-.*', '') ) == "9.6" and
+    ( pg_hint_plan_version ) == "1.2.3-1" and
     ( ansible_distribution_major_version ) == "7"
 
 - name: pg_hint_plan_url
