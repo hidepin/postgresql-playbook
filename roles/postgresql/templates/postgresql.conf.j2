@@ -516,7 +516,6 @@ log_line_prefix = '< %m >'
 {% else %}
 log_line_prefix = '{{ pg_log_line_prefix }}'
 {% endif %}
-
 #log_lock_waits = off			# log lock waits >= deadlock_timeout
 log_lock_waits = {{ pg_log_lock_waits }}
 #log_statement = 'none'			# none, ddl, mod, all
