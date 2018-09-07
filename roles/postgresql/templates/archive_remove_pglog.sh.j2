@@ -22,7 +22,7 @@ cd "${log_directory}" || exit 1
 mkdir -p "${archive_directory}" || exit 1
 
 # search the csv log files that have been updated in more than one day ago
-target_files=($(find -maxdepth 1 -type f ! -name "{{ pg_pg_statsinfo_textlog_filename }}" -daystart -ctime +${archive_date})) || exit 1
+target_files=($(find -maxdepth 1 -type f ! -name "{{ pg_pg_statsinfo_textlog_filename }}" -daystart -mtime +${archive_date})) || exit 1
 
 # create archive file
 {% raw %}if [ ${#target_files[@]} -gt 0 ] ; then
