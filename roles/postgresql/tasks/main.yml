@@ -106,6 +106,7 @@
   command: su - postgres -c "/usr/pgsql-{{ pgdg_version|regex_replace('-.*', '') }}/bin/initdb -D {{ postgresql_top_dir }}/pgdata/data -X {{ postgresql_top_dir }}/pgxlog/pg_xlog --encoding=UTF-8 --no-locale"
   args:
     creates: "{{ postgresql_top_dir }}/pgdata/data/PG_VERSION"
+  when: pg_createdb_enabled
 
 - block:
   - name: postgres bash profile
@@ -191,12 +192,21 @@
     loop_control:
       loop_var: backup_item
 
+- name: postgresql enable
+  service:
+    name: "postgresql-{{ pgdg_version|regex_replace('-.*', '') }}.service"
+    enabled: yes
+    daemon_reload: yes
+  when: >-
+    pg_createdb_enabled and
+    pg_service_enabled
+
 - name: postgresql start
   service:
     name: "postgresql-{{ pgdg_version|regex_replace('-.*', '') }}.service"
     state: started
-    enabled: yes
     daemon_reload: yes
+  when: pg_createdb_enabled
 
 - block:
   - name: statsinfo user check
@@ -217,7 +227,9 @@
     command: "/usr/pgsql-{{ pgdg_version|regex_replace('-.*', '') }}/bin/createdb -U {{ pg_statsinfo_user }} {{ pg_statsinfo_database }}"
     when: statsinfo_database_check.stdout == ''
 
-  when: "'postgresql_with_pg_statsinfo_repodb' in group_names"
+  when: >-
+    "'postgresql_with_pg_statsinfo_repodb' in group_names" and
+    pg_createdb_enabled
 
 - block:
   - name: add archive_remove_pglog.sh
@@ -250,7 +262,9 @@
     command: "/usr/pgsql-{{ pgdg_version|regex_replace('-.*', '') }}/bin/psql -U postgres -d postgres -c \"CREATE EXTENSION pg_stat_statements\""
     when: pg_stat_statement_enabled.stdout == ''
 
-  when: pg_stat_statement_enabled
+  when: >-
+    pg_stat_statement_enabled and
+    pg_createdb_enabled
 
 - block:
   - name: pg_store_plans repo db enabled check
@@ -272,4 +286,6 @@
     command: "/usr/pgsql-{{ pgdg_version|regex_replace('-.*', '') }}/bin/psql -U postgres -d postgres -c \"CREATE EXTENSION pg_store_plans\""
     when: pg_store_plans_enabled.stdout == ''
 
-  when: ( groups['postgresql_with_pg_statsinfo_repodb']|length ) != 0
+  when: >-
+    ( groups['postgresql_with_pg_statsinfo_repodb']|length ) != 0 and
+    pg_createdb_enabled

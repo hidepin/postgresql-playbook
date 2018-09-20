@@ -28,6 +28,8 @@ pg_pgxlog_disk: ""
 pg_pgarch_disk: ""
 pg_arc1_disk: ""
 pg_log_disk: ""
+pg_createdb_enabled: True
+pg_service_enabled: True
 
 ############################################################
 # postgresq.conf parameter
