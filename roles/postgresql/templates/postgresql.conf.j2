@@ -215,7 +215,7 @@ wal_level = {{ pg_wal_level }}
 						# unrecoverable data corruption)
 #synchronous_commit = on		# synchronization level;
 					# off, local, remote_write, remote_apply, or on
-synchronous_commit = off
+synchronous_commit = local
 #wal_sync_method = fsync		# the default is the first option
 					# supported by the operating system:
 					#   open_datasync
