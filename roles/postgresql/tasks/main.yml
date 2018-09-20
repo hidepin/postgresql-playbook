@@ -168,6 +168,7 @@
       backup: yes
     register: is_postgresql_conf_setting
     notify: postgresql restart
+    when: pg_createdb_enabled
 
   - name: pg_hba.conf settings
     template:
@@ -179,6 +180,7 @@
       backup: yes
     register: is_pg_hba_conf_setting
     notify: postgresql restart
+    when: pg_createdb_enabled
 
   always:
   - name: postgresql backup settings
